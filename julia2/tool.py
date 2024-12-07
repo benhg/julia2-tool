@@ -9,15 +9,22 @@ import argparse
 from data_types import *
 import os
 
-from config import system_config_file
+import config
 
 global act_to_func
+
+global project_config
+global system_config
 
 """
 Public API
 """
 
 def check_system_config():
+    if not os.path.exists(config.system_config_file):
+        return False
+    else:
+        system_config = config.load_system_config()
 
 
     
@@ -66,6 +73,7 @@ if __name__ == '__main__':
         "delete_project": delete_project,
         "configure_project": configure_project,
         "configure_system": configure_system,
+        "display_config": display_config,
         "create_index_fasta_from_raw_reads": create_index_fasta_from_raw_reads,
         "create_indexes": create_indexes,
         "run_alignmnents": run_alignments,

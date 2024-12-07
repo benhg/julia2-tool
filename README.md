@@ -111,3 +111,13 @@ Each step above produces and requires different data. This is a list:
 5. Check for hoppers
     a. Run tool currently called "postprocess_summary.py"
 
+## Installation
+
+Prerequisites:
+
+1. Bowtie2
+
+## Usage
+
+
+
