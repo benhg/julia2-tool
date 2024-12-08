@@ -35,7 +35,7 @@ Each step above produces and requires different data. This is a list:
 - Organize the directories like this:
 ```
 .
-├── config.json
+├── project_config.json
 ├── indexes
 │   ├── seq1_index
 │   │   ├── seq1_index.btl2

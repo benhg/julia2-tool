@@ -1,12 +1,14 @@
-
-
-
 """
-Convert gdoc text to FASTA
-
-Converts the google docs I was given into more usable fasta
+Utility functions for the project
 """
+
+
 def convert_to_fasta(input_file, output_file):
+	"""
+	Convert gdoc text to FASTA
+
+	Converts the google docs I was given into more usable fasta
+	"""
     with open(input_file, 'r') as infile, open(output_file, 'w') as outfile:
         label = None
         sequence = []
@@ -39,8 +41,5 @@ def convert_to_fasta(input_file, output_file):
         if label and sequence:
             outfile.write(f">{label}\n")
             outfile.write(''.join(sequence) + "\n")
-
-
-
 
 
