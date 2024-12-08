@@ -6,11 +6,17 @@ import os
 
 class SlurmSettings():
 	def __init__(self):
-		pass
+		# Map of node to number of CPUs
+		self.nodes = {}
+		self.account = ""
+		self.partition_name = ""
 
 class SystemConfig:
 	def __init__(self):
-		pass
+		# Map of name to path
+		self.projects = {}
+		self.project_path = ""
+		self.slurm_settings = SlurmSettings()
 
 class ProjectConfig:
 	def __init__(self, project_name, project_path):

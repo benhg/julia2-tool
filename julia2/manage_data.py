@@ -5,7 +5,7 @@ Manage the data for a project
 import os
 
 
-def create_blank_project(project_config):
+def create_blank_project(project_config, system_config):
     """
     Create a new directory structure for a new project
 
@@ -49,7 +49,7 @@ def create_blank_project(project_config):
         os.makedirs(project_path exist_ok=True)
     else:
         res = input("WARNING: Project already exists. Continue anyways? y/N")
-        if res != "Y":
+        if res.lower() != "y":
             return
 
     # Make project config
@@ -69,3 +69,15 @@ def create_blank_project(project_config):
 
     with open(f"{project_path}/output/hoppingg_results.csv", "a"):
         os.utime(f"{project_path}/output/alignment_database.csv", None)
+
+
+def delete_project(project_config, system_config):
+    """
+    Delete files associated with a project
+    """
+    res = input(f"Deleting {project_config.project_name}. Are you sure? y/N")
+    if res.lower() == "y":
+        os.rmdirs(project_config.project_path)
+        system_config.projects[project_config.project_name] = None
+
+

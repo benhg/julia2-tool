@@ -10,6 +10,7 @@ from data_types import *
 import os
 
 import config
+import manage_data
 
 global act_to_func
 
@@ -20,15 +21,46 @@ global system_config
 Public API
 """
 
-def check_system_config():
+def check_system_config(args):
+    """
+    Check if the system is configured. If so, load the config.
+    """
     if not os.path.exists(config.system_config_file):
         return False
     else:
         system_config = config.load_system_config()
 
+def get_project_config(args):
+    """
+    Load the project config object with details about the project
+    """
+    project_config = config.load_project_config(system_config, args.project)
+    if project_config == False:
+        print("WARNING: Loading project config failed")
 
-    
 
+def create_project(args):
+    """
+    Create a new blank project.
+    """
+    manage_data.create_blank_project(project_config)
+
+def delete_project(args):
+    """
+    Delete a project
+    """
+    manage_data.delete_project(project_config)
+    # Set the project config to None so update knows it's gone
+    project_config = None
+
+
+
+
+def configure_system(args):
+    """
+    Configure the system interactively
+    """
+    system_config = config.congfigure_system()
 
 
 def _parse_args(parser: argparse.ArgumentParser):
@@ -43,7 +75,7 @@ def _parse_args(parser: argparse.ArgumentParser):
                         required=True)
     parser.add_argument("-p",
                         "--project",
-                        help="Project name to act on",
+                        help="Project name to act on. Either absolute path or path relative to JULIA2-Projects dir in system config",
                         type=str,
                         required=True)
     parser.add_argument("-r",
@@ -89,8 +121,14 @@ if __name__ == '__main__':
         else:
             print("WARNING: System not configured. ")
 
+    get_project_config()
+
 
     parser = argparse.ArgumentParser(
         description="View and manage paper portfolios")
     args = _parse_args(parser)
     act_to_func[args.action](args)
+
+    # Write back any changed configs to the files
+    config.update_configs(system_config, project_config)
+
