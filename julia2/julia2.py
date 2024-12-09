@@ -88,7 +88,7 @@ def create_index_fasta_from_raw_reads(args, system_config, project_config):
     """
     Create a new index .fasta file from a list of sequences, in a newline-delimited plain text list, passed into -f option
     """
-    create_index.find_reads(args.file, args.read_id, project_config)
+    create_index.find_reads(args.file, args.read_id, args.output_file, project_config)
 
 def cleanup_index_fastas(args, system_config, project_config):
     """
@@ -136,6 +136,10 @@ def _parse_args(parser: argparse.ArgumentParser):
     parser.add_argument("-f",
                         "--file",
                         help="File to operate on. Action specific behavior",
+                        type=str)
+    parser.add_argument("-o",
+                        "--output-file",
+                        help="File to output tp. Action specific behavior",
                         type=str)
     parser.add_argument(
         "-t",

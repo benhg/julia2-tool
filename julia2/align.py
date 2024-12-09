@@ -1,7 +1,7 @@
 """
 Run alignments on the small indexes
 
-They'll go into /home/labs/binford/taxon_confirmation_indexes/s_{XYZ}/
+They'll go into the indexes directory for the project
 """
 
 import subprocess
