@@ -63,7 +63,7 @@ def cleanup_index_fastas(project_config):
     base_dir = f"{project_config.project_path}/indexes/"
     files = glob.glob(f"{base_dir}/*.fasta")
     for file in files:
-        dir_name = f"{file.split(".fasta")[0]}"
+        dir_name = f"{file.split('.fasta')[0]}"
         if os.path.isdir(dir_name):
             shutil.move(file, dir_name)
 
