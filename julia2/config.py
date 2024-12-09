@@ -47,7 +47,7 @@ class SystemConfig:
                     "current_node": self.slurm_settings.current_node,
                     "partition_name": self.slurm_settings.partition_name,
                     "account": self.slurm_settings.account,
-                    "email": self.email
+                    "email": self.slurm_settings.email
                 },
                 "use_slurm": self.use_slurm,
                 "project_dir": self.project_dir,
