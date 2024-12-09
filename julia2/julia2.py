@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-tool.py
+julia2.py
 
 The `main` executable for this project.
 """
