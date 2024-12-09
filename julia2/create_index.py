@@ -64,10 +64,10 @@ def cleanup_index_fastas(project_config):
     base_dir = f"{project_config.project_dir}/indexes/"
     files = glob.glob(f"{base_dir}/*.fasta")
     for file in files:
-        printf(f"Found file {file}")
+        print(f"Found file {file}")
         dir_name = f"{file.split('.fasta')[0]}"
         if os.path.isdir(dir_name):
-            printf(f"move file {file} to {dir_name}")
+            print(f"move file {file} to {dir_name}")
             shutil.move(file, dir_name)
 
 
