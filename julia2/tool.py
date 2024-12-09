@@ -13,11 +13,6 @@ import create_index
 import final_output
 import database
 
-global act_to_func
-
-global project_config
-global system_config
-global slurm_settings
 """
 Public API
 """
@@ -45,7 +40,7 @@ def get_project_config(system_config):
         print("WARNING: Loading project config failed")
 
 
-def get_slurm_settings(args):
+def get_slurm_settings(args, system_config, project_config):
     """
     Load the SLURM settings object with details about the project
     """
@@ -54,14 +49,14 @@ def get_slurm_settings(args):
         print("WARNING: Loading project config failed")
 
 
-def create_project(args):
+def create_project(args, system_config, project_config):
     """
     Create a new blank project.
     """
     manage_data.create_blank_project(project_config)
 
 
-def delete_project(args):
+def delete_project(args, system_config, project_config):
     """
     Delete a project
     """
@@ -70,41 +65,41 @@ def delete_project(args):
     project_config = None
 
 
-def create_indexes():
+def create_indexes(args, system_config, project_config):
     """
     Given a FASTA file of sequences, create one index for each sequence in that FASTA
     """
     create_index.create_all_indexes_for_new_fasta(args.file, project_config,
-                                                  slurm_settings)
+                                                  system_config.slurm_settings)
 
 
-def configure_system(args):
+def configure_system(args, system_config, project_config):
     """
     Configure the system interactively
     """
     system_config = config.congfigure_system()
 
 
-def generate_output(args):
+def generate_output(args, system_config, project_config):
     """
     Generate the final output file with the annotated guesses about what is/isn't a hopper
     """
     final_output.create_final_output(project_config)
 
 
-def update_database(args):
+def update_database(args, system_config, project_config):
     """
     Update the alignment database with all jobs that have
     """
     database.update_database(project_config)
 
-def create_index_fasta_from_raw_reads(args):
+def create_index_fasta_from_raw_reads(args, system_config, project_config):
     """
     Create a new index .fasta file from a list of sequences, in a newline-delimited plain text list, passed into -f option
     """
     create_index.find_reads(args.file, args.raw_reads)
 
-def run_alignments(args):
+def run_alignments(args, system_config, project_config):
     func_to_align_set = {
         "all": align.run_all_samples,
         "taxon_auto": run_all_taxon_auto_samples,
@@ -187,7 +182,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description="View and manage paper portfolios")
     args = _parse_args(parser)
-    act_to_func[args.action](args)
+    act_to_func[args.action](args, system_config, project_config)
 
     # Write back any changed configs to the files
     config.update_configs(system_config, project_config)
