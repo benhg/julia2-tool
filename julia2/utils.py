@@ -76,7 +76,7 @@ def create_sbatch_template(slurm_settings,
 
     sbatch_template = f"""#!/bin/bash
 #SBATCH --cpus-per-task={cpus}
-#SBATCH --partition {slurm_settings.partition}
+#SBATCH --partition {slurm_settings.partition_name}
 #SBATCH --mail-user {slurm_settings.email}
 #SBATCH --mail-type BEGIN
 #SBATCH --mail-type END
