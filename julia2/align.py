@@ -40,8 +40,6 @@ bowtie2 -f --threads {cpus} -x {project_config.project_dir}/indexes/{index_id}_i
 
 {sbatch_cmds}
 """
-
-    logging.debug(sbatch_text)
     #utils.run_slurm_job(sbatch_text,
     #                    f"align_index_{index_id}_reads_{reads_sample_id}",
     #                    project_config)
