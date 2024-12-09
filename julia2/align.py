@@ -10,10 +10,6 @@ import time
 
 import utils
 
-combined_files_dir = "/home/labs/binford/raw_reads_fasta_tagged_batched/combined_files/"
-base_dir = "/home/labs/binford/taxon_confirmation_indexes/"
-
-
 def run_alignment(reads_sample_id, index_id, slurm_settings, project_config):
     # TODO: Handle more than 2 lanes
     if int(reads_sample_id) <= num_samples_per_lane - 1:
@@ -26,11 +22,11 @@ def run_alignment(reads_sample_id, index_id, slurm_settings, project_config):
                                                          cpus=True,
                                                          align_index="ALIGN")
 
-    print(lane, f"{combined_files_dir}/lane{lane}-s{reads_sample_id}*R1*")
+    print(lane, f"{project_config.project_dir}/raw_reads/lane{lane}-s{reads_sample_id}*R1*")
 
     #print(f"{combined_files_dir}/lane{lane}-s{index_id}*R1*")
     dir_1_filename = glob(
-        f"{combined_files_dir}/lane{lane}-s{reads_sample_id}*R1*")[0]
+        f"{project_config.project_dir}/raw_reads/lane{lane}-s{reads_sample_id}*R1*")[0]
 
     sbatch_cmds = f"""
 echo "index_{index_id} read_s{reads_sample_id}"

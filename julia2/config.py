@@ -21,7 +21,7 @@ class SlurmSettings:
 class SystemConfig:
     slurm_settings: SlurmSettings
     use_slurm: bool
-    project_path: str
+    project_dir: str
     projects: List[str]
 
     @staticmethod
@@ -31,7 +31,7 @@ class SystemConfig:
         slurm_settings = SlurmSettings(**data['slurm_settings'])
         return SystemConfig(slurm_settings=slurm_settings,
                             use_slurm=data['use_slurm'],
-                            project_path=data['project_path'],
+                            project_dir=data['project_dir'],
                             projects=data['projects'])
 
     def to_json(self) -> str:
@@ -45,7 +45,7 @@ class SystemConfig:
                     "account": self.slurm_settings.account
                 },
                 "use_slurm": self.use_slurm,
-                "project_path": self.project_path,
+                "project_dir": self.project_dir,
                 "projects": self.projects
             },
             indent=4)
@@ -120,8 +120,8 @@ def load_project_config(system_config, project):
 
 
 def update_configs(system_config, project_config):
-    project_config_text = project_config.to_json
-    system_config_text = system_config.to_json
+    project_config_text = project_config.to_json()
+    system_config_text = system_config.to_json()
     with open(system_config_file, "w") as fh:
         fh.write(system_config_text)
     with open(f"{project_config.project_dir}/project_config.json", "w") as fh:
