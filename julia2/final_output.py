@@ -5,6 +5,9 @@ from glob import glob
 import csv
 import subprocess
 import sys
+import logging
+
+logger = logging.getLogger("julia2.final_output")
 
 import utils
 

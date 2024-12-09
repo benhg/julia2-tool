@@ -9,6 +9,9 @@ from Bio import SeqIO
 import glob
 import shutil
 import os
+import logging
+
+logger = logging.getLogger("julia2.create_index")
 
 import utils
 
@@ -64,10 +67,10 @@ def cleanup_index_fastas(project_config):
     base_dir = f"{project_config.project_dir}/indexes/"
     files = glob.glob(f"{base_dir}/*.fasta")
     for file in files:
-        print(f"Found file {file}")
-        dir_name = f"{file.split('.fasta')[0]}"
+        logger.debug(f"Found file {file}")
+        dir_name = os.path.dirname(file)
         if os.path.isdir(dir_name):
-            print(f"move file {file} to {dir_name}")
+            logger.debug(f"move file {file} to {dir_name}")
             shutil.move(file, dir_name)
 
 
@@ -78,7 +81,7 @@ def create_all_indexes_for_new_fasta(new_fasta_path, system_config, project_conf
     """
     cleanup_index_fastas(project_config)
     split_fasta_file_into_indexes(new_fasta_path, project_config)
-    submit_all_index_requests(project_config, slurm_settings)
+    submit_all_index_requests(project_config, system_config)
 
 
 def find_reads(file, read_id, project_config):

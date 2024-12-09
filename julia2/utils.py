@@ -3,6 +3,10 @@ Utility functions for the project
 """
 import subprocess
 import sys
+import logging
+
+logger = logging.getLogger("julia2.utils")
+
 
 def run_cmd(cmd):
     return subprocess.check_output(cmd, shell=True).decode(sys.stdout.encoding)
@@ -101,3 +105,30 @@ def run_slurm_job(sbatch_text, sbatch_name, project_config):
         subprocess.check_output(
             f"sbatch {project_config.project_dir}/slurm_jobs/{sbatch_name}.sh",
             shell=True))
+
+
+def setup_logging(project_config, log_level: int = logging.DEBUG):
+    """
+    Set up basic logging configuration.
+
+    Args:
+        log_file (str): The path to the log file.
+        log_level (int): The logging level (e.g., logging.DEBUG, logging.INFO).
+    # TODO: lower the log level to INFO when ready
+    """
+    # Define log format
+    log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    date_format = "%Y-%m-%d %H:%M:%S"
+
+    log_file = f"{project_config.project_dir}/logs/julia2.log"
+
+    # Set up the root logger
+    logging.basicConfig(
+        level=log_level,
+        format=log_format,
+        datefmt=date_format,
+        handlers=[
+            logging.FileHandler(log_file),   # Log to a file
+            logging.StreamHandler(sys.stdout)         # Log to console
+        ]
+    )

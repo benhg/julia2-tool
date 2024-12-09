@@ -7,6 +7,9 @@ import os
 import json
 from dataclasses import dataclass, field
 from typing import Dict, List
+import logging
+
+logger = logging.getLogger("julia2.config")
 
 
 @dataclass
@@ -102,7 +105,7 @@ def load_system_config():
 
 
 def create_system_config():
-    print("Not implemented yet. For now, please write the JSON file yourself")
+    logger.error("Not implemented yet. For now, please write the JSON file yourself")
     raise NotImplemented
 
 
@@ -129,7 +132,7 @@ def update_configs(system_config, project_config):
 
 
 def create_project_config():
-    print("Not implemented yet. For now, please write the JSON file yourself")
+    logger.error("Not implemented yet. For now, please write the JSON file yourself")
     raise NotImplemented
 
 
@@ -139,5 +142,5 @@ def congfigure_system():
 	1. Slurm settings
 	2. Projects base dir
 	"""
-    print("Not implemented yet. For now, please write the JSON file yourself")
+    logger.error("Not implemented yet. For now, please write the JSON file yourself")
     raise NotImplemented

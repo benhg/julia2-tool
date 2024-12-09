@@ -4,6 +4,11 @@ Manage the data for a project
 
 import os
 
+import logging
+
+logger = logging.getLogger("julia2.manage_data")
+
+
 
 def create_blank_project(project_config, system_config):
     """

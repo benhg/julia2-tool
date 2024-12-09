@@ -7,6 +7,9 @@ They'll go into /home/labs/binford/taxon_confirmation_indexes/s_{XYZ}/
 import subprocess
 from glob import glob
 import time
+import logging
+
+logger = logging.getLogger("julia2.align")
 
 import utils
 
