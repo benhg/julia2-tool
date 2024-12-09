@@ -107,7 +107,7 @@ def run_alignments(args, system_config, project_config):
         "other_lane": align.run_all_cross_lane_samples
     }
 
-    func_to_align_set[args.taxon_set](slurm_settings, project_config, args.file)
+    func_to_align_set[args.taxon_set](system_config, project_config, args.file)
 
 def _parse_args(parser: argparse.ArgumentParser):
     """
