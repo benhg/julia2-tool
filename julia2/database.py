@@ -27,7 +27,7 @@ def update_database(project_config):
     output_file = f"{project_config.project_dir}/output/alignment_database_data/alignment_database.csv"
 
     sample_to_taxon = project_config.sample_to_taxon
-    sample_to_taxon = project_config.sample_to_taxon_short
+    sample_to_taxon_short = project_config.sample_to_taxon_short
 
     with open(output_file, "w") as fh:
         writer = csv.writer(fh)
