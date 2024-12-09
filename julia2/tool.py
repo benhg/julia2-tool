@@ -33,7 +33,7 @@ def check_system_config():
         system_config = config.load_system_config()
 
 
-def get_project_config(args):
+def get_project_config():
     """
     Load the project config object with details about the project
     """
