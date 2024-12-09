@@ -49,7 +49,7 @@ def run_all_samples(system_config, project_config, sequence_name_list):
     sequences = open(sequence_name_list).readlines()
     for index in sequences:
         index_id = os.path.basename(index.split(".fasta")[0]).strip()
-        logging.debug("Running all alignments on sample {index_id}")
+        logging.debug(f"Running all alignments on sample {index_id}")
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
@@ -60,7 +60,7 @@ def run_all_true_auto_samples(system_config, project_config, sequence_name_list)
     sequences = open(sequence_name_list).readlines()
     for index in sequences:
         index_id = os.path.basename(index.split(".fasta")[0]).strip()
-        logging.debug("Running true-auto alignment on sample {index_id}")
+        logging.debug(f"Running true-auto alignment on sample {index_id}")
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
@@ -73,7 +73,7 @@ def run_all_allo_samples(system_config, project_config, sequence_name_list):
     sequences = open(sequence_name_list).readlines()
     for index in sequences:
         index_id = os.path.basename(index.split(".fasta")[0]).strip()
-        logging.debug("Running allo alignment on sample {index_id}")
+        logging.debug(f"Running allo alignment on sample {index_id}")
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
@@ -85,7 +85,7 @@ def run_all_taxon_auto_samples(system_config, project_config, sequence_name_list
     sequences = open(sequence_name_list).readlines()
     for index in sequences:
         index_id = os.path.basename(index.split(".fasta")[0]).strip()
-        logging.debug("Running taxon-auto alignment on sample {index_id}")
+        logging.debug(f"Running taxon-auto alignment on sample {index_id}")
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
@@ -104,7 +104,7 @@ def run_all_intra_lane_samples(system_config, project_config, sequence_name_list
     sequences = open(sequence_name_list).readlines()
     for index in sequences:
         index_id = os.path.basename(index.split(".fasta")[0]).strip()
-        logging.debug("Running same-lane alignment on sample {index_id}")
+        logging.debug(f"Running same-lane alignment on sample {index_id}")
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
@@ -134,7 +134,7 @@ def run_all_cross_lane_samples(system_config, project_config, sequence_name_list
     sequences = open(sequence_name_list).readlines()
     for index in sequences:
         index_id = os.path.basename(index.split(".fasta")[0]).strip()
-        logging.debug("Running other-lane alignment on sample {index_id}")
+        logging.debug(f"Running other-lane alignment on sample {index_id}")
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
