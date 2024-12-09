@@ -108,7 +108,7 @@ def find_reads(file, read_id, out_file, project_config):
             for record in raw_reads:
                 if sequence in record.id:
                     header = record.id
-                    if read_id not in header:
+                    if read_id not in header.split(" ")[0]:
                         header = f"{read_id}_{header}"
                     logger.debug(f"Found sequence {sequence} in read {read_id}. Title {header}")
                     out_file.write(f">{header}\n")
