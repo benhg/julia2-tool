@@ -33,6 +33,8 @@ def check_system_config():
     else:
         system_config = config.load_system_config()
 
+    return system_config
+
 
 def get_project_config(system_config):
     """
@@ -176,6 +178,8 @@ if __name__ == '__main__':
             configure_system()
         else:
             print("WARNING: System not configured. ")
+
+    system_config = configured
 
     get_project_config(system_config)
     get_slurm_settings()
