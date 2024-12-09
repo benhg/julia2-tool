@@ -71,7 +71,7 @@ Each step above produces and requires different data. This is a list:
 - Final answers get put in `hopping_results.csv`
 - SLURM job batch files are stored in `slurm_jobs/`
 
-## Steps with future tool - tool interface design
+## Steps to Detect Index Hopping
 
 1. Configuration details - store to JSON or use configurator tool or both:
     a. Location of Bowtie2
@@ -123,5 +123,42 @@ Prerequisites:
 
 ## Usage
 
+The help menu for the project is as follows:
+
+```
+usage: tool.py [-h] -a
+               {create_project,delete_project,configure_project,configure_system,create_index_fasta_from_raw_reads,create_indexes,run_alignmnents,update_database,generate_output}
+               -p PROJECT [-r RAW_READS] [-f FILE] [-t {all,true_auto,taxon_auto,allo,same_lane,other_lane}]
+
+View and manage paper portfolios
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -a {create_project,delete_project,configure_project,configure_system,create_index_fasta_from_raw_reads,create_indexes,run_alignmnents,update_database,generate_output}, --action {create_project,delete_project,configure_project,configure_system,create_index_fasta_from_raw_reads,create_indexes,run_alignmnents,update_database,generate_output}
+                        Action to perform.
+  -p PROJECT, --project PROJECT
+                        Project name to act on. Either absolute path or path relative to JULIA2-Projects dir in system
+                        config
+  -r RAW_READS, --raw-reads RAW_READS
+                        Raw Reads FASTA file, used for creating index fastas
+  -f FILE, --file FILE  File to operate on. Action specific behavior
+  -t {all,true_auto,taxon_auto,allo,same_lane,other_lane}, --taxon-set {all,true_auto,taxon_auto,allo,same_lane,other_lane}
+                        For alignment, specify which type of raw read taxons to run alignments against
+```
+
+Generally, follow the steps in the section "steps to detect index hopping". Example project and system config files can be found in the JSON files in this directory. The system config matches the HPC system at Lewis & Clark College and the project config matches a specific dataset we have been working with there.
+
+0. Install BioPython and Bowtie2
+1. Get access to a SLURM cluster (or wait for us to implement local run, and prepare to run your code for a LONG time)
+2. Configure the system config to match your SLURM project in `~/.julia2/system_config.json`
+3. Create a blank project with the `create_project` option
+4. Create the config file for the project you just created
+5. Put your raw reads in the `raw_reads` folder in the project you created
+5. Prepare your dataset to match what the tool looks for - Raw read files must start with `sXXX_{name}.fasta`.
+6. Either use the `create_index_fasta_from_raw_reads` option of this tool, or otherwise create a single FASTA of all the sequences you want to make an index out of
+7. Create indexes using the `create_indexes` options
+8. Run alignments of raw reads against your indexes. Make sure you are providing a newline-separated list of sequence names in the `--file` option
+9. Create a database from the alignments you ran using `update_database`
+10. Create an index hopping report using `generate_output`
 
 
