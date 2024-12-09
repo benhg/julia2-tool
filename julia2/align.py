@@ -51,50 +51,42 @@ def run_all_samples(system_config, project_config, sequence_name_list):
     # For each sequence
     sequences = open(sequence_name_list).readlines()
     for index in sequences:
-        index_id = index.split(".fasta")[0].split(
-            f"{project_config.project_dir}/indexes")[1]
-        index_id = index_id.strip()
+        index_id = os.path.basename(index.split(".fasta")[0]).strip()
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
             print(reads_sample_id, index_id)
-            run_alignment(reads_sample_id, index_id, system_config.slurm_settings,
+            run_alignment(reads_sample_id, index_id, system_config,
                           project_config)
 
 def run_all_true_auto_samples(system_config, project_config, sequence_name_list):
     sequences = open(sequence_name_list).readlines()
     for index in sequences:
-        index_id = index.split(".fasta")[0].split(
-            f"{project_config.project_dir}/indexes")[1]
-        index_id = index_id.strip()
+        index_id = os.path.basename(index.split(".fasta")[0]).strip()
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
             if reads_sample_id in index_id:
                 print(reads_sample_id, index_id)
-                run_alignment(reads_sample_id, index_id, system_config.slurm_settings,
+                run_alignment(reads_sample_id, index_id, system_config,
                               project_config)
 
 def run_all_allo_samples(system_config, project_config, sequence_name_list):
     sequences = open(sequence_name_list).readlines()
     for index in sequences:
-        index_id = index.split(".fasta")[0].split(
-            f"{project_config.project_dir}/indexes")[1]
-        index_id = index_id.strip()
+        index_id = os.path.basename(index.split(".fasta")[0]).strip()
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
             if int(reads_sample_id) not in int(index_id):
                 print(reads_sample_id, index_id)
-                run_alignment(reads_sample_id, index_id, system_config.slurm_settings,
+                run_alignment(reads_sample_id, index_id, system_config,
                               project_config)
 
 def run_all_taxon_auto_samples(system_config, project_config, sequence_name_list):
     sequences = open(sequence_name_list).readlines()
     for index in sequences:
-        index_id = index.split(".fasta")[0].split(
-            f"{project_config.project_dir}/indexes")[1]
-        index_id = index_id.strip()
+        index_id = os.path.basename(index.split(".fasta")[0]).strip()
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
@@ -106,15 +98,13 @@ def run_all_taxon_auto_samples(system_config, project_config, sequence_name_list
                 index_sample_id = "s018"
             if project_config.index_to_taxon_short[int(index_sample_id)] == project_config.index_to_taxon_short[int(reads_sample_id)]:
                 print(reads_sample_id, index_id)
-                run_alignment(reads_sample_id, index_id, system_config.slurm_settings,
+                run_alignment(reads_sample_id, index_id, system_config,
                               project_config)
 
 def run_all_intra_lane_samples(system_config, project_config, sequence_name_list):
     sequences = open(sequence_name_list).readlines()
     for index in sequences:
-        index_id = index.split(".fasta")[0].split(
-            f"{project_config.project_dir}/indexes")[1]
-        index_id = index_id.strip()
+        index_id = os.path.basename(index.split(".fasta")[0]).strip()
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
@@ -138,15 +128,13 @@ def run_all_intra_lane_samples(system_config, project_config, sequence_name_list
 
             if index_lane == reads_lane:
                 print(reads_sample_id, index_id)
-                run_alignment(reads_sample_id, index_id, system_config.slurm_settings,
+                run_alignment(reads_sample_id, index_id, system_config,
                               project_config)
 
 def run_all_cross_lane_samples(system_config, project_config, sequence_name_list):
     sequences = open(sequence_name_list).readlines()
     for index in sequences:
-        index_id = index.split(".fasta")[0].split(
-            f"{project_config.project_dir}/indexes")[1]
-        index_id = index_id.strip()
+        index_id = os.path.basename(index.split(".fasta")[0]).strip()
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
@@ -170,5 +158,5 @@ def run_all_cross_lane_samples(system_config, project_config, sequence_name_list
 
             if index_lane != reads_lane:
                 print(reads_sample_id, index_id)
-                run_alignment(reads_sample_id, index_id, system_config.slurm_settings,
+                run_alignment(reads_sample_id, index_id, system_config,
                               project_config)
