@@ -34,7 +34,7 @@ def check_system_config():
         system_config = config.load_system_config()
 
 
-def get_project_config():
+def get_project_config(system_config):
     """
     Load the project config object with details about the project
     """
@@ -177,7 +177,7 @@ if __name__ == '__main__':
         else:
             print("WARNING: System not configured. ")
 
-    get_project_config()
+    get_project_config(system_config)
     get_slurm_settings()
 
     parser = argparse.ArgumentParser(
