@@ -8,6 +8,8 @@ import csv
 import subprocess
 import sys
 
+import utils
+
 headers = [
     "reads_sample", "reads_taxon", "index_sample", "index_taxon", "num_reads",
     "pairtype", "num_aligned_none", "num_aligned_once", "num_aligned_multiple",

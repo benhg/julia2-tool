@@ -6,6 +6,8 @@ import csv
 import subprocess
 import sys
 
+import utils
+
 # Database headers list is only stored in database.py file
 from database import headers
 
@@ -24,8 +26,8 @@ def hopper_threshold(value):
 
 def create_final_output(project_config):
 
-    input_file = f"{project_config.project_path}/output/alignment_database.csv"
-    output_file = f"{project_config.project_path}/output/hopping_results.csv"
+    input_file = f"{project_config.project_dir}/output/alignment_database.csv"
+    output_file = f"{project_config.project_dir}/output/hopping_results.csv"
 
     sample_to_taxon = project_config.sample_to_taxon
     sample_to_taxon = project_config.sample_to_taxon_short
