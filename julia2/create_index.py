@@ -105,7 +105,7 @@ def find_reads(file, read_id, out_file, project_config):
     for sequence in sequences:
         logger.debug(f"searching for sequence {sequence} in read {read_id}")
         with open(reads_file, "r") as reads_handle:
-            raw_reads = SeqIO.parse(old_handle, "fasta")
+            raw_reads = SeqIO.parse(reads_handle, "fasta")
             for record in raw_reads:
                 if sequence in record.id:
                     header = record.id
