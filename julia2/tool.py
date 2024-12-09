@@ -23,7 +23,7 @@ Public API
 """
 
 
-def check_system_config(args):
+def check_system_config():
     """
     Check if the system is configured. If so, load the config.
     """
@@ -161,7 +161,6 @@ if __name__ == '__main__':
         "delete_project": delete_project,
         "configure_project": config.create_project_config,
         "configure_system": configure_system,
-        "display_config": None,
         "create_index_fasta_from_raw_reads": create_index_fasta_from_raw_reads,
         "create_indexes": create_indexes,
         "run_alignmnents": run_alignments,
