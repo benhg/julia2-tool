@@ -50,8 +50,7 @@ chmod 777 {project_config.project_dir}/indexes/{index_name}_index
 
 bowtie2-build --threads {cpus} {project_config.project_dir}/indexes/{index_name}.fasta {project_config.project_dir}/indexes/{index_name}_index/{index_name}_index
 """
-    sbatch_text  = f"""
-{sbatch_template}
+    sbatch_text  = f"""{sbatch_template}
 
 {sbatch_commands_template}
 """

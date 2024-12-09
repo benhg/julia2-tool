@@ -37,8 +37,7 @@ echo "index_{index_id} read_s{reads_sample_id}"
 bowtie2 -f --threads {cpus} -x {project_config.project_dir}/indexes/{index_id}_index/{index_id}_index -U {dir_1_filename} > {project_config.project_dir}/output/alignment_database_data/raw/index_{index_id}_read_s{reads_sample_id}.sam
 """
 
-    sbatch_text = f"""
-{sbatch_template}
+    sbatch_text = f"""{sbatch_template}
 
 {sbatch_cmds}
 """
