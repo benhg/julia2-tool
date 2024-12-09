@@ -44,7 +44,7 @@ def create_project(args, system_config, project_config):
     """
     Create a new blank project.
     """
-    manage_data.create_blank_project(project_config)
+    manage_data.create_blank_project(project_config, system_config)
 
 
 def delete_project(args, system_config, project_config):
