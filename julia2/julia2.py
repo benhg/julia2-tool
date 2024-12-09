@@ -14,6 +14,7 @@ import create_index
 import final_output
 import database
 import utils
+import align
 
 """
 Public API
@@ -99,11 +100,11 @@ def cleanup_index_fastas(args, system_config, project_config):
 def run_alignments(args, system_config, project_config):
     func_to_align_set = {
         "all": align.run_all_samples,
-        "taxon_auto": run_all_taxon_auto_samples,
-        "true_auto": run_all_true_auto_samples,
-        "allo": run_all_allo_samples,
-        "same_lane": run_all_intra_lane_samples,
-        "other_lane": run_all_cross_lane_samples
+        "taxon_auto": align.run_all_taxon_auto_samples,
+        "true_auto": align.run_all_true_auto_samples,
+        "allo": align.run_all_allo_samples,
+        "same_lane": align.run_all_intra_lane_samples,
+        "other_lane": align.run_all_cross_lane_samples
     }
 
     func_to_align_set[args.taxon_set](slurm_settings, project_config, args.file)
@@ -165,7 +166,7 @@ act_to_func = {
         "configure_system": configure_system,
         "create_index_fasta_from_raw_reads": create_index_fasta_from_raw_reads,
         "create_indexes": create_indexes,
-        "run_alignmnents": run_alignments,
+        "run_alignments": run_alignments,
         "update_database": update_database,
         "generate_output": generate_output,
         "cleanup_index_fastas": cleanup_index_fastas
