@@ -21,8 +21,8 @@ def update_database(project_config):
     Update the intermediate alignment database checking for newly completed runs
     """
 
-    path = f"{project_config.project_path}/output/alignment_database_data/slurm-*.out"
-    output_file = f"{project_config.project_path}/output/alignment_database_data/alignment_database.csv"
+    path = f"{project_config.project_dir}/output/alignment_database_data/slurm-*.out"
+    output_file = f"{project_config.project_dir}/output/alignment_database_data/alignment_database.csv"
 
     sample_to_taxon = project_config.sample_to_taxon
     sample_to_taxon = project_config.sample_to_taxon_short
@@ -69,9 +69,8 @@ def update_database(project_config):
                     }
 
                     # Pair type
-
                     try:
-                        if int(reads_sample.split("s")[1]) <= 11:
+                        if int(reads_sample.split("s")[1]) <= project_config.num_samples_per_lane - 1:
                             reads_lane = 1
                         else:
                             reads_lane = 2
@@ -79,7 +78,7 @@ def update_database(project_config):
                         reads_lane = 2
 
                     try:
-                        if int(index_sample.split("s")[1]) <= 11:
+                        if int(index_sample.split("s")[1]) <= project_config.num_samples_per_lane - 1:
                             index_lane = 1
                         else:
                             index_lane = 2
