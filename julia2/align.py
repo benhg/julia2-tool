@@ -77,6 +77,7 @@ def run_all_allo_samples(system_config, project_config, sequence_name_list):
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
+            index_sample_id = index_id.split("_")[0]
             if project_config.sample_to_taxon_short[index_sample_id] != project_config.sample_to_taxon_short[f"s{reads_sample_id}"]:
                 run_alignment(reads_sample_id, index_id, system_config,
                               project_config)
