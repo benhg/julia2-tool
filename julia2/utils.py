@@ -84,7 +84,7 @@ def create_sbatch_template(slurm_settings,
 #SBATCH -e {out_dir}/slurm-%j.err
 #SBATCH -o {out_dir}/slurm-%j.out
 """
-
+    logging.debug(f"Running slurm job on node {node} with CPUs {cpus}")
     keyList = sorted(slurm_settings.nodes.keys())
     for i, v in enumerate(keyList):
         if v == node:
@@ -105,7 +105,7 @@ def run_slurm_job(sbatch_text, sbatch_name, project_config):
     with open(f"{project_config.project_dir}/slurm_jobs/{sbatch_name}.sh",
               "w") as fh:
         fh.write(sbatch_text)
-    print(
+    logging.info(
         subprocess.check_output(
             f"sbatch {project_config.project_dir}/slurm_jobs/{sbatch_name}.sh",
             shell=True))

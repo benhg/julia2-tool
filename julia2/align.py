@@ -20,7 +20,7 @@ def run_alignment(reads_sample_id, index_id, system_config, project_config):
         lane = 1
     else:
         lane = 2
-    logging.info(f"Running alignment for reads {reads_sample_id} and index {index_id}")
+    logging.debug(f"Running alignment for reads {reads_sample_id} and index {index_id}")
     sbatch_template, cpus = utils.create_sbatch_template(system_config.slurm_settings,
                                                          project_config,
                                                          cpus=True,
@@ -40,16 +40,16 @@ bowtie2 -f --threads {cpus} -x {project_config.project_dir}/indexes/{index_id}_i
 
 {sbatch_cmds}
 """
-    #utils.run_slurm_job(sbatch_text,
-    #                    f"align_index_{index_id}_reads_{reads_sample_id}",
-    #                    project_config)
+    utils.run_slurm_job(sbatch_text,
+                        f"align_index_{index_id}_reads_{reads_sample_id}",
+                        project_config)
 
 def run_all_samples(system_config, project_config, sequence_name_list):
     # For each sequence
     sequences = open(sequence_name_list).readlines()
     for index in sequences:
         index_id = os.path.basename(index.split(".fasta")[0]).strip()
-        logging.debug(f"Running all alignments on sample {index_id}")
+        logging.info(f"Running all alignments on sample {index_id}")
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
@@ -60,7 +60,7 @@ def run_all_true_auto_samples(system_config, project_config, sequence_name_list)
     sequences = open(sequence_name_list).readlines()
     for index in sequences:
         index_id = os.path.basename(index.split(".fasta")[0]).strip()
-        logging.debug(f"Running true-auto alignment on sample {index_id}")
+        logging.info(f"Running true-auto alignment on sample {index_id}")
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
@@ -86,7 +86,7 @@ def run_all_taxon_auto_samples(system_config, project_config, sequence_name_list
     sequences = open(sequence_name_list).readlines()
     for index in sequences:
         index_id = os.path.basename(index.split(".fasta")[0]).strip()
-        logging.debug(f"Running taxon-auto alignment on sample {index_id}")
+        logging.info(f"Running taxon-auto alignment on sample {index_id}")
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
@@ -105,7 +105,7 @@ def run_all_intra_lane_samples(system_config, project_config, sequence_name_list
     sequences = open(sequence_name_list).readlines()
     for index in sequences:
         index_id = os.path.basename(index.split(".fasta")[0]).strip()
-        logging.debug(f"Running same-lane alignment on sample {index_id}")
+        logging.info(f"Running same-lane alignment on sample {index_id}")
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
@@ -135,7 +135,7 @@ def run_all_cross_lane_samples(system_config, project_config, sequence_name_list
     sequences = open(sequence_name_list).readlines()
     for index in sequences:
         index_id = os.path.basename(index.split(".fasta")[0]).strip()
-        logging.debug(f"Running other-lane alignment on sample {index_id}")
+        logging.info(f"Running other-lane alignment on sample {index_id}")
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
