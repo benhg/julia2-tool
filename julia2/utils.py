@@ -43,3 +43,48 @@ def convert_to_fasta(input_file, output_file):
             outfile.write(''.join(sequence) + "\n")
 
 
+def create_sbatch_template(commands, slurm_settings, cpus=True):
+	"""
+	Create an SBatch file - return the text and the number of CPUs
+	"""
+
+	node = slurm_settings.current_node
+
+	# Use all CPUs by default
+	if cpus == True:
+		cpus = slurm_settings.nodes[node]
+
+	sbatch_template = f"""#!/bin/bash
+#SBATCH --cpus-per-task={cpus}
+#SBATCH --partition {slurm_settings.partition}
+#SBATCH --mail-user {slurm_settings.email}
+#SBATCH --mail-type BEGIN
+#SBATCH --mail-type END
+#SBATCH --mail-type FAIL
+
+{commands}
+"""
+
+	keyList=sorted(slurm_settings.nodes.keys())
+	for i,v in enumerate(keyList):
+    	if v == node:
+    		if i + 1 >= len(keyList):
+    			i = 0
+			slurm_settings.current_node = slurm_settings.nodes[keyList[i+1]]
+			break
+
+    return sbatch_template, cpus
+        
+
+def run_slurm_job(sbatch_text, sbatch_name, project_config):
+	"""
+	Submit a Slurm job with SBatch text passed in
+	"""
+	with open(f"{project_config.project_path}/slurm_jobs/{sbatch_name}.sh", "w") as fh:
+        fh.write(sbatch_text)
+    print(
+        subprocess.check_output(
+            f"sbatch {project_config.project_path}/slurm_jobs/{sbatch_name}.sh",
+           shell=True))
+
+

@@ -63,48 +63,15 @@ sample_to_taxon_short = {
     "c49446": "Scytodes"
 }
 
-# Collected from
-# f'bowtie2-inspect --large-index /home/labs/binford/single_sample_indexes/{index_sample}_index/{index_sample}_index
-# see get_sizes.py
-sample_to_transcript_count = {
-    "s001": 146829,
-    "s002": 165083,
-    "s003": 176396,
-    "s004": 177026,
-    "s005": 178906,
-    "s006": 136577,
-    "s007": 157499,
-    "s008": 143469,
-    "s009": 167627,
-    "s010": 183810,
-    "s011": 191292,
-    "s012": 167942,
-    "s013": 223989,
-    "s014": 229674,
-    "s015": 196020,
-    "s016": 161846,
-    "s017": 292600,
-    "s018": 148310,
-    "s019": 191686,
-    "s020": 167585,
-    "s021": 245515,
-    "s022": 170940,
-    "c74742": 167585,
-    "c49446": 148310
-}
-
-
 def run_cmd(cmd):
     return subprocess.check_output(cmd, shell=True).decode(sys.stdout.encoding)
 
 
 headers = [
     "reads_sample", "reads_taxon", "index_sample", "index_taxon", "num_reads",
-    "num_transcripts", "pairtype", "num_aligned_none", "num_aligned_once",
+    "pairtype", "num_aligned_none", "num_aligned_once",
     "num_aligned_multiple", "none_alignment_rate", "single_alignment_rate",
-    "multiple_alignment_rate", "num_aligned_any", "alignment_rate",
-    "reads_per_transcript_none", "reads_per_transcript_one",
-    "reads_per_transcript_multiple", "reads_per_transcript_any", "exec_time"
+    "multiple_alignment_rate", "num_aligned_any", "alignment_rate", "exec_time"
 ]
 
 path = "/home/glick/JULIA-Take-2/src/single_sequence_index/slurm-*.out"
@@ -144,8 +111,6 @@ with open(output_file, "a") as fh:
                     "reads_sample": reads_sample,
                     "reads_taxon": sample_to_taxon[reads_sample],
                     "num_reads": int(data[1].split(" ")[0]),
-                    "num_transcripts":
-                    sample_to_transcript_count[index_sample],
                     "num_aligned_none": int(data[3].split("(")[0].strip()),
                     "num_aligned_once": int(data[4].split("(")[0].strip()),
                     "num_aligned_multiple": int(data[5].split("(")[0].strip()),
@@ -192,19 +157,6 @@ with open(output_file, "a") as fh:
                 row["alignment_rate"] = row["num_aligned_any"] / row[
                     "num_reads"]
 
-                # Reads/transcript scores
-                row["reads_per_transcript_none"] = row[
-                    "num_aligned_none"] / sample_to_transcript_count[
-                        index_sample]
-                row["reads_per_transcript_one"] = row[
-                    "num_aligned_once"] / sample_to_transcript_count[
-                        index_sample]
-                row["reads_per_transcript_multiple"] = row[
-                    "num_aligned_multiple"] / sample_to_transcript_count[
-                        index_sample]
-                row["reads_per_transcript_any"] = row[
-                    "num_aligned_any"] / sample_to_transcript_count[
-                        index_sample]
 
                 writer.writerow(row)
             except Exception as e:

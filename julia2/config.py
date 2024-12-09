@@ -17,6 +17,7 @@ class SystemConfig:
 		self.projects = {}
 		self.project_path = ""
 		self.slurm_settings = SlurmSettings()
+		self.email = ""
 
 class ProjectConfig:
 	def __init__(self, project_name, project_path):
