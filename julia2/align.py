@@ -8,6 +8,7 @@ import subprocess
 from glob import glob
 import time
 import logging
+import os
 
 logger = logging.getLogger("julia2.align")
 
