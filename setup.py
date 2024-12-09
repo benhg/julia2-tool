@@ -10,7 +10,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        # Add your dependencies here, e.g., "numpy", "pandas", etc.
+        "biopython"
     ],
     entry_points={
         "console_scripts": [

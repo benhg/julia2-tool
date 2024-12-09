@@ -87,7 +87,7 @@ def create_index_fasta_from_raw_reads(args, system_config, project_config):
     """
     Create a new index .fasta file from a list of sequences, in a newline-delimited plain text list, passed into -f option
     """
-    create_index.find_reads(args.file, args.raw_reads)
+    create_index.find_reads(args.file, args.read_id, project_config)
 
 def run_alignments(args, system_config, project_config):
     func_to_align_set = {
@@ -121,6 +121,10 @@ def _parse_args(parser: argparse.ArgumentParser):
     parser.add_argument("-r",
                         "--raw-reads",
                         help="Raw Reads FASTA file, used for creating index fastas",
+                        type=str)
+    parser.add_argument("-i",
+                        "--read-id",
+                        help="Read ID that goes with the -f option for the create_index_fasta_from_raw_reads option",
                         type=str)
     parser.add_argument("-f",
                         "--file",
