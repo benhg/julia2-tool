@@ -36,6 +36,7 @@ def update_database(project_config):
     with open(output_file, "a") as fh:
         writer = csv.DictWriter(fh, fieldnames=headers)
         all_files = glob(path)
+        #TODO: Run this in parallel since sacct command runs pretty slow
         for file in all_files:
             with open(file) as fh2:
                 try:

@@ -143,7 +143,7 @@ def _parse_args(parser: argparse.ArgumentParser):
 """
 Switchboard
 """
-if __name__ == '__main__':
+def main():
     act_to_func = {
         "create_project": create_project,
         "delete_project": delete_project,
@@ -179,3 +179,6 @@ if __name__ == '__main__':
 
     # Write back any changed configs to the files
     config.update_configs(system_config, project_config)
+
+if __name__ == '__main__':
+    main()
