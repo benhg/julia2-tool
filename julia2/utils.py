@@ -99,6 +99,8 @@ def create_sbatch_template(slurm_settings,
 def run_slurm_job(sbatch_text, sbatch_name, project_config):
     """
     Submit a Slurm job with SBatch text passed in
+
+    sbatch_name must not contain any /
     """
     with open(f"{project_config.project_dir}/slurm_jobs/{sbatch_name}.sh",
               "w") as fh:
