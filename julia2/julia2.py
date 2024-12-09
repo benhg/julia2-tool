@@ -147,8 +147,7 @@ def _parse_args(parser: argparse.ArgumentParser):
 """
 Switchboard
 """
-def main():
-    act_to_func = {
+act_to_func = {
         "create_project": create_project,
         "delete_project": delete_project,
         "configure_project": config.create_project_config,
@@ -159,6 +158,8 @@ def main():
         "update_database": update_database,
         "generate_output": generate_output
     }
+
+def main():
 
     configured = check_system_config()
     if configured == False:
