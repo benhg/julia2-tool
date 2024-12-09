@@ -76,7 +76,7 @@ def run_all_allo_samples(system_config, project_config, sequence_name_list):
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
-            if int(reads_sample_id) not in int(index_id):
+            if project_config.sample_to_taxon_short[index_sample_id] != project_config.sample_to_taxon_short[f"s{reads_sample_id}"]:
                 run_alignment(reads_sample_id, index_id, system_config,
                               project_config)
 
@@ -112,11 +112,11 @@ def run_all_intra_lane_samples(system_config, project_config, sequence_name_list
                 index_id = "s018"
 
             # Pair type
-            if int(reads_sample.split("s")[1]) <= project_config.num_samples_per_lane - 1:
+            if int(reads_sample_id) <= project_config.num_samples_per_lane - 1:
                 reads_lane = 1
             else:
                 reads_lane = 2
-            if int(index_sample.split("s")[1]) <= project_config.num_samples_per_lane - 1:
+            if int(index_id.split("s")[1]) <= project_config.num_samples_per_lane - 1:
                 index_lane = 1
             else:
                 index_lane = 2
@@ -142,11 +142,11 @@ def run_all_cross_lane_samples(system_config, project_config, sequence_name_list
                 index_id = "s018"
 
             # Pair type
-            if int(reads_sample.split("s")[1]) <= project_config.num_samples_per_lane - 1:
+            if int(reads_sample_id) <= project_config.num_samples_per_lane - 1:
                 reads_lane = 1
             else:
                 reads_lane = 2
-            if int(index_sample.split("s")[1]) <= project_config.num_samples_per_lane - 1:
+            if int(index_id.split("s")[1]) <= project_config.num_samples_per_lane - 1:
                 index_lane = 1
             else:
                 index_lane = 2
