@@ -1,0 +1,18 @@
+{
+	"slurm_settings": {
+		"nodes": {
+			"bacon": 48,
+			"lettuce": 48,
+			"tomato": 48,
+			"sprouts": 48,
+			"onions": 64,
+			"pickles": 64
+		},
+		"current_node": "bacon",
+		"partition_name": "blt",
+		"account": "blt_staff"
+	},
+
+	"project_path": "/home/labs/binford/",
+	"projects": ["index_hopping_project"]
+}

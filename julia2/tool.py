@@ -11,11 +11,13 @@ import os
 
 import config
 import manage_data
+import create_index
 
 global act_to_func
 
 global project_config
 global system_config
+global slurm_settings
 
 """
 Public API
@@ -38,6 +40,14 @@ def get_project_config(args):
     if project_config == False:
         print("WARNING: Loading project config failed")
 
+def get_slurm_settings(args):
+    """
+    Load the SLURM settings object with details about the project
+    """
+    slurm_settings = config.load_slurm_settings(system_config, args.project)
+    if slurm_settings == False:
+        print("WARNING: Loading project config failed")
+
 
 def create_project(args):
     """
@@ -53,7 +63,11 @@ def delete_project(args):
     # Set the project config to None so update knows it's gone
     project_config = None
 
-
+def create_indexes():
+    """
+    Given a FASTA file of sequences, create one index for each sequence in that FASTA
+    """
+    create_index.create_all_indexes_for_new_fasta(args.file, project_config, slurm_settings)
 
 
 def configure_system(args):
@@ -81,8 +95,8 @@ def _parse_args(parser: argparse.ArgumentParser):
     parser.add_argument("-r",
                         "--raw-reads",
                         help="Raw Reads FASTA directory",
-                        type=str,
-                        required=True)
+                        type=str)
+    parser.add_argument("-f", "--file", help="File to operate on. Action specific behavior", type=str)
 
     parser.add_argument(
         "-t",
@@ -122,7 +136,7 @@ if __name__ == '__main__':
             print("WARNING: System not configured. ")
 
     get_project_config()
-
+    get_slurm_settings()
 
     parser = argparse.ArgumentParser(
         description="View and manage paper portfolios")
