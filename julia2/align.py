@@ -16,7 +16,7 @@ import utils
 
 def run_alignment(reads_sample_id, index_id, system_config, project_config):
     # TODO: Handle more than 2 lanes
-    if int(reads_sample_id) <= num_samples_per_lane - 1:
+    if int(reads_sample_id) <= project_config.num_samples_per_lane - 1:
         lane = 1
     else:
         lane = 2
