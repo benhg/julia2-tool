@@ -42,35 +42,35 @@ def create_blank_project(project_config, system_config):
     """
 
     # Project path should be handled by earlier steps when config is created
-    project_path = project_config.project_path
+    project_dir = project_config.project_dir
     project_name = project_config.project_name
 
-    if not os.path.exists(project_path):
-        os.makedirs(project_path, exist_ok=True)
+    if not os.path.exists(project_dir):
+        os.makedirs(project_dir, exist_ok=True)
     else:
         res = input("WARNING: Project already exists. Continue anyways? y/N")
         if res.lower() != "y":
             return
 
     # Make project config
-    with open(f"{project_path}/project_config.json", "a"):
-        os.utime(f"{project_path}/project_config.json", None)
+    with open(f"{project_dir}/project_config.json", "a"):
+        os.utime(f"{project_dir}/project_config.json", None)
 
-    os.makedirs(f"{project_path}/indexes", exist_ok=True)
-    os.makedirs(f"{project_path}/raw_reads", exist_ok=True)
-    os.makedirs(f"{project_path}/slurm_jobs", exist_ok=True)
-    os.makedirs(f"{project_path}/logs", exist_ok=True)
-    os.makedirs(f"{project_path}/output", exist_ok=True)
-    os.makedirs(f"{project_path}/output/alignment_database_data",
+    os.makedirs(f"{project_dir}/indexes", exist_ok=True)
+    os.makedirs(f"{project_dir}/raw_reads", exist_ok=True)
+    os.makedirs(f"{project_dir}/slurm_jobs", exist_ok=True)
+    os.makedirs(f"{project_dir}/logs", exist_ok=True)
+    os.makedirs(f"{project_dir}/output", exist_ok=True)
+    os.makedirs(f"{project_dir}/output/alignment_database_data",
                 exist_ok=True)
-    os.makedirs(f"{project_path}/output/index_creation")
+    os.makedirs(f"{project_dir}/output/index_creation")
 
     # Make output files
-    with open(f"{project_path}/output/alignment_database.csv", "a"):
-        os.utime(f"{project_path}/output/alignment_database.csv", None)
+    with open(f"{project_dir}/output/alignment_database.csv", "a"):
+        os.utime(f"{project_dir}/output/alignment_database.csv", None)
 
-    with open(f"{project_path}/output/hoppingg_results.csv", "a"):
-        os.utime(f"{project_path}/output/alignment_database.csv", None)
+    with open(f"{project_dir}/output/hoppingg_results.csv", "a"):
+        os.utime(f"{project_dir}/output/alignment_database.csv", None)
 
 
 def delete_project(project_config, system_config):
@@ -79,5 +79,5 @@ def delete_project(project_config, system_config):
     """
     res = input(f"Deleting {project_config.project_name}. Are you sure? y/N")
     if res.lower() == "y":
-        os.rmdirs(project_config.project_path)
+        os.rmdirs(project_config.project_dir)
         system_config.projects[project_config.project_name] = None

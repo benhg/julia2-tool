@@ -38,6 +38,7 @@ def get_project_config(system_config, args):
     project_config = config.load_project_config(system_config, args.project)
     if project_config == False:
         print("WARNING: Loading project config failed")
+    return project_config
 
 def create_project(args, system_config, project_config):
     """
@@ -170,7 +171,10 @@ if __name__ == '__main__':
         description="View and manage paper portfolios")
     args = _parse_args(parser)
 
-    get_project_config(system_config, args)
+    if args.action != "create_project":
+        project_config = get_project_config(system_config, args)
+    else:
+        project_config = config.ProjectConfig(project_dir=args.project)
     
     act_to_func[args.action](args, system_config, project_config)
 

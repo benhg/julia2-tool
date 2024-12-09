@@ -60,9 +60,9 @@ def create_sbatch_template(slurm_settings,
         cpus = slurm_settings.nodes[node]
 
     if align_index == "ALIGN":
-        out_dir = f"{project_config.project_path}/output/alignment_database_data"
+        out_dir = f"{project_config.project_dir}/output/alignment_database_data"
     else:
-        out_dir = f"{project_config.project_path}/output/index_creation"
+        out_dir = f"{project_config.project_dir}/output/index_creation"
 
     sbatch_template = f"""#!/bin/bash
 #SBATCH --cpus-per-task={cpus}
@@ -90,10 +90,10 @@ def run_slurm_job(sbatch_text, sbatch_name, project_config):
     """
     Submit a Slurm job with SBatch text passed in
     """
-    with open(f"{project_config.project_path}/slurm_jobs/{sbatch_name}.sh",
+    with open(f"{project_config.project_dir}/slurm_jobs/{sbatch_name}.sh",
               "w") as fh:
         fh.write(sbatch_text)
     print(
         subprocess.check_output(
-            f"sbatch {project_config.project_path}/slurm_jobs/{sbatch_name}.sh",
+            f"sbatch {project_config.project_dir}/slurm_jobs/{sbatch_name}.sh",
             shell=True))
