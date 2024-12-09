@@ -152,6 +152,7 @@ def move_with_exist_ok(src: str, dst: str, exist_ok: bool = False):
                 os.remove(dst)
             # If it's a directory, remove it and its contents
             elif os.path.isdir(dst):
+                raise FileExistsError(f"Destination '{dst}' already exists as dir. Not deleting directory")
                 shutil.rmtree(dst)
         else:
             raise FileExistsError(f"Destination '{dst}' already exists.")
