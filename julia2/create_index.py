@@ -71,7 +71,7 @@ def cleanup_index_fastas(project_config):
         logger.error(dir_name)
         if os.path.isdir(dir_name):
             logger.debug(f"move file {file} to {dir_name}")
-            utils.move_with_exist_ok(file, dir_name, exist_ok=True)
+            utils.move_with_exist_ok(file, f"{dir_name}/{os.path.basename(file)}", exist_ok=True)
 
 
 def create_all_indexes_for_new_fasta(new_fasta_path, system_config, project_config):
