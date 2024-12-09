@@ -64,7 +64,6 @@ def run_all_true_auto_samples(system_config, project_config, sequence_name_list)
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
-            print(f"s{reads_sample_id}_", index_id)
             if f"s{reads_sample_id}_" in index_id:
                 run_alignment(reads_sample_id, index_id, system_config,
                               project_config)
