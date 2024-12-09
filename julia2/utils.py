@@ -2,6 +2,7 @@
 Utility functions for the project
 """
 import subprocess
+import sys
 
 def run_cmd(cmd):
     return subprocess.check_output(cmd, shell=True).decode(sys.stdout.encoding)
