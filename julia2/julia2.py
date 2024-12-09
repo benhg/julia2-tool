@@ -59,8 +59,7 @@ def create_indexes(args, system_config, project_config):
     """
     Given a FASTA file of sequences, create one index for each sequence in that FASTA
     """
-    create_index.create_all_indexes_for_new_fasta(args.file, project_config,
-                                                  system_config.slurm_settings)
+    create_index.create_all_indexes_for_new_fasta(args.file, system_config, project_config)
 
 
 def configure_system(args, system_config, project_config):
