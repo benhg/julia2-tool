@@ -25,8 +25,6 @@ def run_alignment(reads_sample_id, index_id, system_config, project_config):
                                                          project_config,
                                                          cpus=True,
                                                          align_index="ALIGN")
-
-    #print(f"{combined_files_dir}/lane{lane}-s{index_id}*R1*")
     dir_1_filename = glob(
         f"{project_config.project_dir}/raw_reads/lane{lane}-s{reads_sample_id}*R1*")[0]
 

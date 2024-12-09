@@ -161,7 +161,48 @@ Generally, follow the steps in the section "steps to detect index hopping". Exam
 10. Create a database from the alignments you ran using `update_database`
 11. Create an index hopping report using `generate_output`
 
-## Understanding the Alignment Database
 
-## Understanding the Final Output File
+## Example usage(s)
+
+Run alignment on the raw read that a sequence (that is an index) is labelled as
+
+```
+cat ../alignment_test.txt 
+s001_c39995_g1_i1_m_10141_SIC_TR_SIC_LRE_LAZ_LRUmerged
+ ./julia2.py -f ../alignment_test.txt -a run_alignments -t true_auto -p /home/labs/binford/index_hopping_project/
+```
+To run other kinds of alignments, just change the `-t` flag.
+
+Create indexes from a FASTA file that contains sequences you wnat to turn into indexes:
+```
+./julia2.py -p /home/labs/binford/index_hopping_project -a create_indexes -f ~/JULIA-Take-2/src/single_sequence_index/data/*.fasta
+```
+
+Clean up the index directory to match FASTAs to the indexes based on them:
+```
+python3 julia2.py -p /home/labs/binford/index_hopping_project -a cleanup_index_fastas
+```
+
+Create a FASTA containing the sequences with names listed in the input file (must be in raw reads)
+```
+cat ../test_sequences.txt
+
+J00107:16:H2LFJBBXX:1:2106:12845:13236
+./julia2.py -f ../test_sequences.txt -a create_index_fasta_from_raw_reads -o ../output_test.fasta
+
+cat ../output_test.fasta 
+
+>s001_J00107:16:H2LFJBBXX:1:2106:12845:13236
+CAAATCTCGTGTTATTCTGGCAAAAACTTATCAGTATCAAGCTGAAATTAATGTGATTGAAAAAGACTTCCTCAAATTTCCCCGATAGCATCAGCTTCTGCGATGCATTCTGGATATTTAGGTTAATTTCGCTGTTTAGTATAACGTATTA
+```
+
+Generate the alignment database after alignments have been run:
+```
+./julia2.py -p /home/labs/binford/index_hopping_project/ -a update_database
+````
+
+Generate the final output after the database has been generated:
+```
+./julia2.py -p /home/labs/binford/index_hopping_project/ -a generate_output
+```
 
