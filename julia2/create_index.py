@@ -108,7 +108,7 @@ def find_reads(file, read_id, out_file, project_config):
             raw_reads = SeqIO.parse(reads_handle, "fasta")
             for record in raw_reads:
                 print(record.id)
-                if sequence in record.id:
+                if sequence.strip() in record.id:
                     header = record.id
                     if read_id not in header.split(" ")[0]:
                         header = f"{read_id}_{header}"
