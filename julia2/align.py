@@ -20,7 +20,7 @@ def run_alignment(reads_sample_id, index_id, system_config, project_config):
         lane = 1
     else:
         lane = 2
-    logging.info(f"Running alignment for reads {reads_sample_id} and index {index}")
+    logging.info(f"Running alignment for reads {reads_sample_id} and index {index_id}")
     sbatch_template, cpus = utils.create_sbatch_template(system_config.slurm_settings,
                                                          project_config,
                                                          cpus=True,
