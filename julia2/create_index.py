@@ -7,6 +7,7 @@ They'll go into /home/labs/binford//home/labs/binford/taxon_confirmation_indexes
 import subprocess
 from Bio import SeqIO
 import glob
+import shutil
 
 import utils
 
@@ -22,35 +23,39 @@ def split_fasta_file_into_indexes(new_fasta_path, project_config):
                 new_file.write(f"{record.seq}\n")
 
 
-def submit_all_index_requests():
+def submit_all_index_requests(project_config, slurm_settings):
     """
     Submit a whole bunch of SBatch scripts to create a lot of indexes
-    """
-    ## Then, submit a bunch of indexing jobs to make indexes
-        sbatch_commands_template = """
-mkdir -p /home/labs/binford/taxon_confirmation_indexes/{}_index
-chmod 777 /home/labs/binford/taxon_confirmation_indexes/{}_index
 
-bowtie2-build --threads {} /home/labs/binford/taxon_confirmation_indexes/{}.fasta /home/labs/binford/taxon_confirmation_indexes/{}_index/{}_index
-"""
+    Assumes that all .fasta files in the indexes directory should be split into indexes
+    """
     base_dir = f"{project_config.project_path}/indexes/"
     files = glob.glob(f"{base_dir}/*.fasta")
     for file in files:
         name = file.split(".fasta")[0].split("/home/labs/binford/taxon_confirmation_indexes/")[1]
-        sbatch_commands = sbatch_commands_template.format(name, name, name,
-                                             name, name)
-        create_index_slurm(sbatch_commands)
+        create_index_slurm(name, project_config, slurm_settings)
 
 
-def create_index_slurm(sbatch_commands):
+def create_index_slurm(index_name, slurm_settings, project_config):
     """
     Create an individual index by submitting a SLURM command
     """
-    sbatch_text = utils.create_sbatch_template(sbatch_commands, slurm_settings)
-    utils.run_slurm_job(sbatch_text, sbatch_name, project_config)
+    sbatch_template, cpus = utils.create_sbatch_template(slurm_settings, project_config, cpus=True, align_index="INDEX")
+    sbatch_commands_template = f"""
+mkdir -p /home/labs/binford/taxon_confirmation_indexes/{index_name}_index
+chmod 777 /home/labs/binford/taxon_confirmation_indexes/{index_name}_index
+
+bowtie2-build --threads {cpus} /home/labs/binford/taxon_confirmation_indexes/{index_name}.fasta /home/labs/binford/taxon_confirmation_indexes/{index_name}_index/{index_name}_index
+"""
+    sbatch_text  = f"""
+{sbatch_template}
+
+{sbatch_commands_template}
+"""
+    utils.run_slurm_job(sbatch_text, f"index_{index_name}", project_config)
 
 
-def cleanup_index_fastas():
+def cleanup_index_fastas(project_config):
     """
     Find all the FASTA files that already have indexes associated with them
     Move them into their index directory
@@ -58,12 +63,16 @@ def cleanup_index_fastas():
     base_dir = f"{project_config.project_path}/indexes/"
     files = glob.glob(f"{base_dir}/*.fasta")
     for file in files:
+        dir_name = f"{file.split(".fasta")[0]}"
+        if os.path.isdir(dir_name):
+            shutil.move(file, dir_name)
+
 
 def create_all_indexes_for_new_fasta(new_fasta_path):
     """
     Create all the indexes and add them to the index directory
     Requires a new FASTA labelled with index names
     """
-    cleanup_index_fastas()
-    split_fasta_file_into_indexes(new_fasta_path)
-    submit_all_index_requests()
+    cleanup_index_fastas(project_config)
+    split_fasta_file_into_indexes(new_fasta_path, project_config)
+    submit_all_index_requests(project_config, slurm_settings)
