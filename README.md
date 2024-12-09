@@ -154,11 +154,14 @@ Generally, follow the steps in the section "steps to detect index hopping". Exam
 3. Create a blank project with the `create_project` option
 4. Create the config file for the project you just created
 5. Put your raw reads in the `raw_reads` folder in the project you created
-5. Prepare your dataset to match what the tool looks for - Raw read files must start with `sXXX_{name}.fasta`.
-6. Either use the `create_index_fasta_from_raw_reads` option of this tool, or otherwise create a single FASTA of all the sequences you want to make an index out of
-7. Create indexes using the `create_indexes` options
-8. Run alignments of raw reads against your indexes. Make sure you are providing a newline-separated list of sequence names in the `--file` option
-9. Create a database from the alignments you ran using `update_database`
-10. Create an index hopping report using `generate_output`
+6. Prepare your dataset to match what the tool looks for - Raw read files must start with `sXXX_{name}.fasta`.
+7. Either use the `create_index_fasta_from_raw_reads` option of this tool, or otherwise create a single FASTA of all the sequences you want to make an index out of
+8. Create indexes using the `create_indexes` options
+9. Run alignments of raw reads against your indexes. Make sure you are providing a newline-separated list of sequence names in the `--file` option
+10. Create a database from the alignments you ran using `update_database`
+11. Create an index hopping report using `generate_output`
 
+## Understanding the Alignment Database
+
+## Understanding the Final Output File
 
