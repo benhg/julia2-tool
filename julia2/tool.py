@@ -4,9 +4,7 @@ tool.py
 
 The `main` executable for this project.
 """
-s
 import argparse
-from data_types import *
 import os
 
 import config
