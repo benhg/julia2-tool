@@ -90,7 +90,7 @@ def create_sbatch_template(slurm_settings,
         if v == node:
             if i + 1 >= len(keyList):
                 i = 0
-            slurm_settings.current_node = slurm_settings.nodes[keyList[i + 1]]
+            slurm_settings.current_node = keyList[i + 1]
             break
 
     return sbatch_template, cpus
