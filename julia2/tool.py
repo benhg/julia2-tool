@@ -174,7 +174,7 @@ if __name__ == '__main__':
     if args.action != "create_project":
         project_config = get_project_config(system_config, args)
     else:
-        project_config = config.ProjectConfig(project_dir=args.project)
+        project_config = config.ProjectConfig(project_dir=args.project, sample_to_taxon=None, sample_to_taxon_short=None, project_name=os.path.basename(args.project), num_samples=0, num_samples_per_lane=0)
     
     act_to_func[args.action](args, system_config, project_config)
 
