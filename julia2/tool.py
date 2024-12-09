@@ -159,7 +159,7 @@ if __name__ == '__main__':
     act_to_func = {
         "create_project": create_project,
         "delete_project": delete_project,
-        "configure_project": config.configure_project,
+        "configure_project": config.create_project_config,
         "configure_system": configure_system,
         "display_config": display_config,
         "create_index_fasta_from_raw_reads": create_index_fasta_from_raw_reads,
