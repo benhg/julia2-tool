@@ -8,6 +8,7 @@ import subprocess
 from Bio import SeqIO
 import glob
 import shutil
+import os
 
 import utils
 
