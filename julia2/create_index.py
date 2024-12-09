@@ -67,7 +67,7 @@ def cleanup_index_fastas(project_config):
     files = glob.glob(f"{base_dir}/*.fasta")
     for file in files:
         logger.debug(f"Found file {file}")
-        dir_name = f"{os.path.dirname(file)}/{os.path.basename(file).split(".fasta")[0]}"
+        dir_name = f"{os.path.dirname(file)}/{os.path.basename(file).split('.fasta')[0]}"
         if os.path.isdir(dir_name):
             logger.debug(f"move file {file} to {dir_name}")
             utils.move_with_exist_ok(file, dir_name, exist_ok=True)
