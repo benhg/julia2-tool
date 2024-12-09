@@ -53,9 +53,9 @@ def update_database(project_config):
                     index_sample_long = data[0].split(" ")[0]
                     reads_sample = data[0].split(" ")[1].split("_")[1].strip()
 
-                    print(
-                        f"Job {slurm_job_name} for index {index_sample} and reads {reads_sample} took {slurm_time}"
-                    )
+                    #print(
+                    #    f"Job {slurm_job_name} for index {index_sample} and reads {reads_sample} took {slurm_time}"
+                    #)
                     # This is gonna be gross
                     row = {
                         "index_sample": index_sample_long,
@@ -118,3 +118,4 @@ def update_database(project_config):
                         continue
 
                     print(f"failed for file {file}")
+    print(f"Generated database to {output_file}")

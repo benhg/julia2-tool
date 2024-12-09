@@ -62,7 +62,7 @@ def create_final_output(project_config):
 
     for sequence, group in index_to_rows.items():
         sequence_sample_label = sequence.split("_")[1]
-        print(sequence_sample_label)
+        #print(sequence_sample_label)
         total_single_aligned = 0
         max_aligned_num = 0
         max_aligned_read = ""
@@ -76,7 +76,7 @@ def create_final_output(project_config):
                 max_aligned_read = row["reads_sample"]
                 max_aligned_taxon = row["reads_taxon"]
             if sequence_sample_label in row["reads_sample"]:
-                print(row["reads_sample"])
+                #print(row["reads_sample"])
                 aligned_num_auto = int(row["num_aligned_once"])
                 aligned_taxon_auto = row["reads_taxon"]
         percent_reads_from_max = (max_aligned_num / total_single_aligned) * 100
@@ -98,3 +98,4 @@ def create_final_output(project_config):
             "hopper_status": hopper_threshold(threshold_metric)
         }
         writer.writerow(summary_row)
+    print(f"Generated output to {output_file}")
