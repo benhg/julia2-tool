@@ -31,23 +31,13 @@ def check_system_config():
     return system_config
 
 
-def get_project_config(system_config):
+def get_project_config(system_config, args):
     """
     Load the project config object with details about the project
     """
     project_config = config.load_project_config(system_config, args.project)
     if project_config == False:
         print("WARNING: Loading project config failed")
-
-
-def get_slurm_settings(args, system_config, project_config):
-    """
-    Load the SLURM settings object with details about the project
-    """
-    slurm_settings = config.load_slurm_settings(system_config, args.project)
-    if slurm_settings == False:
-        print("WARNING: Loading project config failed")
-
 
 def create_project(args, system_config, project_config):
     """
@@ -176,12 +166,12 @@ if __name__ == '__main__':
 
     system_config = configured
 
-    get_project_config(system_config)
-    get_slurm_settings()
-
     parser = argparse.ArgumentParser(
         description="View and manage paper portfolios")
     args = _parse_args(parser)
+
+    get_project_config(system_config, args)
+    
     act_to_func[args.action](args, system_config, project_config)
 
     # Write back any changed configs to the files
