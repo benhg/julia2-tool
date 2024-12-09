@@ -97,6 +97,23 @@ def update_database(args):
     """
     database.update_database(project_config)
 
+def create_index_fasta_from_raw_reads(args):
+    """
+    Create a new index .fasta file from a list of sequences, in a newline-delimited plain text list, passed into -f option
+    """
+    create_index.find_reads(args.file, args.raw_reads)
+
+def run_alignments(args):
+    func_to_align_set = {
+        "all": align.run_all_samples,
+        "taxon_auto": run_all_taxon_auto_samples,
+        "true_auto": run_all_true_auto_samples,
+        "allo": run_all_allo_samples,
+        "same_lane": run_all_intra_lane_samples,
+        "other_lane": run_all_cross_lane_samples
+    }
+
+    func_to_align_set[args.taxon_set](slurm_settings, project_config, args.file)
 
 def _parse_args(parser: argparse.ArgumentParser):
     """
@@ -117,13 +134,12 @@ def _parse_args(parser: argparse.ArgumentParser):
         required=True)
     parser.add_argument("-r",
                         "--raw-reads",
-                        help="Raw Reads FASTA directory",
+                        help="Raw Reads FASTA file, used for creating index fastas",
                         type=str)
     parser.add_argument("-f",
                         "--file",
                         help="File to operate on. Action specific behavior",
                         type=str)
-
     parser.add_argument(
         "-t",
         "--taxon-set",

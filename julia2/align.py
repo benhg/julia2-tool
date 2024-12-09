@@ -50,9 +50,10 @@ bowtie2 -f --threads {cpus} -x /home/labs/binford/taxon_confirmation_indexes/{in
                         project_config)
 
 
-def run_all_intra_lane_samples(slurm_settings, project_config):
+def run_all_samples(slurm_settings, project_config, sequence_name_list):
     # For each sequence
-    for index in glob(f"{base_dir}/*.fasta"):
+    sequences = open(sequence_name_list).readlines()
+    for index in sequences:
         index_id = index.split(".fasta")[0].split(
             "/home/labs/binford/taxon_confirmation_indexes/")[1]
         # For each sample
@@ -62,5 +63,53 @@ def run_all_intra_lane_samples(slurm_settings, project_config):
             run_alignment(reads_sample_id, index_id, slurm_settings,
                           project_config)
 
+def run_all_true_auto_samples(slurm_settings, project_config, sequence_name_list):
+    sequences = open(sequence_name_list).readlines()
+    for index in sequences:
+        index_id = index.split(".fasta")[0].split(
+            "/home/labs/binford/taxon_confirmation_indexes/")[1]
+        # For each sample
+        for i in range(1, project_config.num_samples + 1):
+            reads_sample_id = str(i).zfill(3)
+            if reads_sample_id in index_id:
+                print(reads_sample_id, index_id)
+                run_alignment(reads_sample_id, index_id, slurm_settings,
+                              project_config)
 
-run_all_intra_lane_samples()
+def run_all_allo_samples(slurm_settings, project_config, sequence_name_list):
+    sequences = open(sequence_name_list).readlines()
+    for index in sequences:
+        index_id = index.split(".fasta")[0].split(
+            "/home/labs/binford/taxon_confirmation_indexes/")[1]
+        # For each sample
+        for i in range(1, project_config.num_samples + 1):
+            reads_sample_id = str(i).zfill(3)
+            if int(reads_sample_id) not in int(index_id):
+                print(reads_sample_id, index_id)
+                run_alignment(reads_sample_id, index_id, slurm_settings,
+                              project_config)
+
+def run_all_taxon_auto_samples(slurm_settings, project_config, sequence_name_list):
+    sequences = open(sequence_name_list).readlines()
+    for index in sequences:
+        index_id = index.split(".fasta")[0].split(
+            "/home/labs/binford/taxon_confirmation_indexes/")[1]
+        # For each sample
+        for i in range(1, project_config.num_samples + 1):
+            reads_sample_id = str(i).zfill(3)
+            index_sample_id = index_id.split("_")[0]
+            # TODO: Remove HACK
+            if "c74742" in index_sample_id:
+                index_sample_id = "s020"
+            if "c49446" in index_sample_id:
+                index_id = "s018"
+            if project_config.index_to_taxon_short[int(index_sample_id)] == project_config.index_to_taxon_short[int(reads_sample_id)]:
+                print(reads_sample_id, index_id)
+                run_alignment(reads_sample_id, index_id, slurm_settings,
+                              project_config)
+
+def run_all_intra_lane_samples(slurm_settings, project_config, sequence_name_list):
+    raise NotImplemented
+
+def run_all_cross_lane_samples(slurm_settings, project_config, sequence_name_list):
+    raise NotImplemented
