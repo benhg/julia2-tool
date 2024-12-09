@@ -12,7 +12,7 @@
 		"partition_name": "blt",
 		"account": "blt_staff"
 	},
-
+	"use_slurm": true,
 	"project_path": "/home/labs/binford/",
 	"projects": ["index_hopping_project"]
 }

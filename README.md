@@ -35,7 +35,7 @@ Each step above produces and requires different data. This is a list:
 - Organize the directories like this:
 ```
 .
-├── project_config.json
+├── config.json
 ├── indexes
 │   ├── seq1_index
 │   │   ├── seq1_index.btl2
@@ -51,7 +51,8 @@ Each step above produces and requires different data. This is a list:
 │   │   ├── index_01_sample_01.out
 │   │   ├── index_01_sample_02.out
 │   │   ├── index_02_sample_01.out
-│   │   └── index_02_sample_02.out
+│   │   ├── index_02_sample_02.out
+│   │   └── raw
 │   ├── hopping_results.csv
 │   └── index_creation
 │       └── index_01.out
@@ -63,8 +64,6 @@ Each step above produces and requires different data. This is a list:
     ├── align2.sh
     ├── index.sh
     └── index1.sh
-
-10 directories, 19 files
 ```
 
 - Intermediate output (from the running of the alignments) will go into `alignment_database_data`
