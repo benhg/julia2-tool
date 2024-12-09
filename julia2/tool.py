@@ -27,6 +27,7 @@ def check_system_config():
     """
     Check if the system is configured. If so, load the config.
     """
+    print(config.system_config_file)
     if not os.path.exists(config.system_config_file):
         return False
     else:
