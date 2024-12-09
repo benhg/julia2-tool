@@ -79,9 +79,10 @@ def create_all_indexes_for_new_fasta(new_fasta_path, system_config, project_conf
     submit_all_index_requests(project_config, system_config.slurm_settings)
 
 
-def find_reads(args.file, args.read_id, project_config):
+def find_reads(file, read_id, project_config):
     """
     Given a list (newline separated) of sequences of interest and a read ID (name/filename), extract those sequences into a .fasta
 
     That fasta can be used for the create_all_indexes_for_new_fasta
     """
+    pass
