@@ -39,7 +39,7 @@ def update_database(project_config):
                 try:
                     # Name and metadata
                     slurm_job_name = file.split("slurm-")[1].split(".out")[0]
-                    slurm_time_str = run_cmd(
+                    slurm_time_str = utils.run_cmd(
                         f'sacct --format="Elapsed" -j {slurm_job_name}')
                     slurm_time = slurm_time_str.split("\n")[-2].strip()
 

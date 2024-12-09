@@ -1,7 +1,10 @@
 """
 Utility functions for the project
 """
+import subprocess
 
+def run_cmd(cmd):
+    return subprocess.check_output(cmd, shell=True).decode(sys.stdout.encoding)
 
 def convert_to_fasta(input_file, output_file):
     """
