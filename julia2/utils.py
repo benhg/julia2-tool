@@ -5,6 +5,7 @@ import subprocess
 import sys
 import logging
 import shutil
+import os
 
 logger = logging.getLogger("julia2.utils")
 
