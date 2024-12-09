@@ -24,7 +24,7 @@ def update_database(project_config):
     """
 
     path = f"{project_config.project_dir}/output/alignment_database_data/slurm-*.out"
-    output_file = f"{project_config.project_dir}/output/alignment_database_data/alignment_database.csv"
+    output_file = f"{project_config.project_dir}/output/alignment_database.csv"
 
     sample_to_taxon = project_config.sample_to_taxon
     sample_to_taxon_short = project_config.sample_to_taxon_short
@@ -113,8 +113,7 @@ def update_database(project_config):
 
                     writer.writerow(row)
                 except Exception as e:
-                    raise e
-                    if "list index out of range":
+                    if "list index out of range" in str(e):
                         print(f"File {file} is still running")
                         continue
 
