@@ -95,13 +95,15 @@ def find_reads(file, read_id, out_file, project_config):
         logger.error(f"Found incorrect number of raw reads. Check configuration. Read ID: {read_id}, n=={len(reads_file)}")
         return
 
-    output_file = open(out_file, "w")
+    out_handle = open(out_file, "w")
 
     reads_file = reads_file[0]
 
     sequences = ""
     with open(file, "r") as fh:
         sequences = fh.readlines()
+
+    sequence_count = 0
     for sequence in sequences:
         logger.debug(f"searching for sequence {sequence} in read {read_id}")
         with open(reads_file, "r") as reads_handle:
@@ -110,11 +112,15 @@ def find_reads(file, read_id, out_file, project_config):
                 print(record.id)
                 if sequence.strip() in record.id:
                     header = record.id
+                    sequence_count += 1
                     if read_id not in header.split(" ")[0]:
                         header = f"{read_id}_{header}"
                     logger.debug(f"Found sequence {sequence} in read {read_id}. Title {header}")
-                    out_file.write(f">{header}\n")
-                    out_file.write(f"{record.seq}\n")
+                    out_handle.write(f">{header}\n")
+                    out_handle.write(f"{record.seq}\n")
+
+                if sequence_count == len(sequences):
+                    return
                     
 
 
