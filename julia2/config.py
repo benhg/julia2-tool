@@ -115,7 +115,7 @@ def load_project_config(system_config, project):
         project_dir = f"{system_config.project_dir}/{project}"
     fh = open(f"{project_dir}/project_config.json", "r")
     json_text = fh.read()
-    config = SystemConfig.from_json(json_text)
+    config = ProjectConfig.from_json(json_text)
     fh.close()
     return config
 
