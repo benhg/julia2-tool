@@ -170,7 +170,7 @@ if __name__ == '__main__':
     }
 
     configured = check_system_config()
-    if not configured:
+    if configured == False:
         text = input("WARNING: System not configured. Configure now? Y/n")
         if text != "n":
             configure_system()

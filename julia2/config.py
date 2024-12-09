@@ -92,9 +92,6 @@ class ProjectConfig:
 # Defaults to ~/.julia2/config.json. Change to an absolute path for shared installs
 system_config_file = os.path.expanduser("~/.julia2/system_config.json")
 
-def get_system_config_file():
-    return os.path.expanduser("~/.julia2/system_config.json")
-
 
 def load_system_config():
     fh = open(system_config_file, "r")
