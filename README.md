@@ -74,24 +74,24 @@ Each step above produces and requires different data. This is a list:
 ## Steps with future tool - tool interface design
 
 1. Configuration details - store to JSON or use configurator tool or both:
-	a. Location of Bowtie2
-	b. Location of raw reads (and format - only allow FASTA for now?)
-	c. Number of nodes to use for runs
-	d. Number of cores per node
-	e. Amount of memory per node
-	f. Slurm account to use
-	g. Working directory. Subdirectories:
-	    i. output/
-	    ii. output/alignment_database.csv (currently called summary.csv)
-	    iii. output/alignment_database_data (the SBatch output files for the alignment runs)
-	    iv. output/hopping_results.csv (currently called post_summary.csv)
-	    v. sbatch/ (the SBatch files are created here)
-	    vi. logs/
-	    vii. indexes/
-	    viii. indexes/<sequence_name>/<bowtie index files>
-	    ix. indexes/<sequence_name>/sequence_name.fasta
-	    x. raw_reads/
-	    xi. raw_reads/<sample_name>/<sample_name>.fasta
+    a. Location of Bowtie2
+    b. Location of raw reads (and format - only allow FASTA for now?)
+    c. Number of nodes to use for runs
+    d. Number of cores per node
+    e. Amount of memory per node
+    f. Slurm account to use
+    g. Working directory. Subdirectories:
+        i. output/
+        ii. output/alignment_database.csv (currently called summary.csv)
+        iii. output/alignment_database_data (the SBatch output files for the alignment runs)
+        iv. output/hopping_results.csv (currently called post_summary.csv)
+        v. sbatch/ (the SBatch files are created here)
+        vi. logs/
+        vii. indexes/
+        viii. indexes/<sequence_name>/<bowtie index files>
+        ix. indexes/<sequence_name>/sequence_name.fasta
+        x. raw_reads/
+        xi. raw_reads/<sample_name>/<sample_name>.fasta
 2. Data related config:
     a. Taxon of each sample
     b. Size of each sample
