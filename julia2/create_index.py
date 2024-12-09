@@ -68,7 +68,7 @@ def cleanup_index_fastas(project_config):
             shutil.move(file, dir_name)
 
 
-def create_all_indexes_for_new_fasta(new_fasta_path):
+def create_all_indexes_for_new_fasta(new_fasta_path, project_config, slurm_settings):
     """
     Create all the indexes and add them to the index directory
     Requires a new FASTA labelled with index names

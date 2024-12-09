@@ -53,5 +53,7 @@
     "c49446": "Scytodes"
 	},
 	"project_dir": "/home/labs/binford/index_hopping_project",
-	"project_name": "index_hopping_project"
+	"project_name": "index_hopping_project",
+    "num_samples": "22",
+    "num_samples_per_lane": "12"
 }

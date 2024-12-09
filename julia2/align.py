@@ -8,23 +8,19 @@ import subprocess
 from glob import glob
 import time
 
+import utils
+
 combined_files_dir = "/home/labs/binford/raw_reads_fasta_tagged_batched/combined_files/"
 base_dir = "/home/labs/binford/taxon_confirmation_indexes/"
 
-sbatch_template = """#!/bin/bash
-#SBATCH --cpus-per-task=48
-
-echo "index_{} read_s{}"
-
-bowtie2 -f --threads 48 -x /home/labs/binford/taxon_confirmation_indexes/{}_index/{}_index -U {} > /home/labs/binford/taxon_confirmation_indexes/{}_index/index_{}_read_s{}.sam
-"""
-
-
-def run_alignment(reads_sample_id, index_id):
-    if int(reads_sample_id) <= 11:
+def run_alignment(reads_sample_id, index_id, slurm_settings, project_config):
+    # TODO: Handle more than 2 lanes
+    if int(reads_sample_id) <= num_samples_per_lane - 1:
         lane = 1
     else:
         lane = 2
+
+    sbatch_template, cpus = utils.create_sbatch_template(slurm_settings, project_config, cpus=True, align_index="ALIGN")
 
     print(lane, f"{combined_files_dir}/lane{lane}-s{reads_sample_id}*R1*")
 
@@ -32,26 +28,31 @@ def run_alignment(reads_sample_id, index_id):
     dir_1_filename = glob(
         f"{combined_files_dir}/lane{lane}-s{reads_sample_id}*R1*")[0]
 
-    job_filename = f"bowtie_cmds/unpaired_align_{index_id}_s{reads_sample_id}.sh"
+    sbatch_cmds = f"""
+echo "index_{index_id} read_s{reads_sample_id}"
 
-    sbatch_text = sbatch_template.format(index_id, reads_sample_id, index_id,
-                                         index_id, dir_1_filename, index_id,
-                                         index_id, reads_sample_id)
+bowtie2 -f --threads {cpus} -x /home/labs/binford/taxon_confirmation_indexes/{index_id}_index/{index_id}_index -U {dir_1_filename} > {project_config.project_dir}/output/alignment_database_data/raw/index_{index_id}_read_s{reads_sample_id}.sam
+"""
+    
+    sbatch_text = f"""
+{sbatch_template}
+
+{sbatch_cmds}
+"""
+
     print(dir_1_filename, index_id, reads_sample_id)
-    with open(job_filename, "w") as fh:
-        fh.write(sbatch_text)
-    time.sleep(0.1)
-    print(subprocess.check_output(f"sbatch {job_filename}", shell=True))
+    utils.run_slurm_job(sbatch_text, f"align_index_{index_id}_reads_{reads_sample_id}", project_config)
 
 
-def run_all_intra_lane_samples():
+
+def run_all_intra_lane_samples(slurm_settings, project_config):
     # For each sequence
     for index in glob(f"{base_dir}/*.fasta"):
         index_id = index.split(".fasta")[0].split("/home/labs/binford/taxon_confirmation_indexes/")[1]
         # For each sample
-        for i in range(1,23):
+        for i in range(1,project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
             print(reads_sample_id, index_id)
-            run_alignment(reads_sample_id, index_id)
+            run_alignment(reads_sample_id, index_id, slurm_settings, project_config)
 
 run_all_intra_lane_samples()

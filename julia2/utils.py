@@ -43,7 +43,7 @@ def convert_to_fasta(input_file, output_file):
             outfile.write(''.join(sequence) + "\n")
 
 
-def create_sbatch_template(commands, slurm_settings, project_config, cpus=True, align_index="ALIGN"):
+def create_sbatch_template(slurm_settings, project_config, cpus=True, align_index="ALIGN"):
 	"""
 	Create an SBatch file - return the text and the number of CPUs
 	"""
@@ -68,8 +68,6 @@ def create_sbatch_template(commands, slurm_settings, project_config, cpus=True, 
 #SBATCH --mail-type FAIL
 #SBATCH -e {out_dir}/slurm-%j.err
 #SBATCH -o {out_dir}/slurm-%j.out
-
-{commands}
 """
 
 	keyList=sorted(slurm_settings.nodes.keys())

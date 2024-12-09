@@ -4,7 +4,7 @@ tool.py
 
 The `main` executable for this project.
 """
-
+s
 import argparse
 from data_types import *
 import os
@@ -12,6 +12,8 @@ import os
 import config
 import manage_data
 import create_index
+import final_output
+import database
 
 global act_to_func
 
@@ -75,6 +77,18 @@ def configure_system(args):
     Configure the system interactively
     """
     system_config = config.congfigure_system()
+
+def generate_output(args):
+    """
+    Generate the final output file with the annotated guesses about what is/isn't a hopper
+    """
+    final_output.create_final_output(project_config)
+
+def update_database(args):
+    """
+    Update the alignment database with all jobs that have
+    """
+    database.update_database(project_config)
 
 
 def _parse_args(parser: argparse.ArgumentParser):
