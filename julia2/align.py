@@ -19,13 +19,13 @@ def run_alignment(reads_sample_id, index_id, slurm_settings, project_config):
         lane = 1
     else:
         lane = 2
-
+    logging.info(f"Running alignment for reads {reads_sample_id} and index {index}")
     sbatch_template, cpus = utils.create_sbatch_template(slurm_settings,
                                                          project_config,
                                                          cpus=True,
                                                          align_index="ALIGN")
 
-    print(lane, f"{project_config.project_dir}/raw_reads/lane{lane}-s{reads_sample_id}*R1*")
+    logging.debug(lane, f"{project_config.project_dir}/raw_reads/lane{lane}-s{reads_sample_id}*R1*")
 
     #print(f"{combined_files_dir}/lane{lane}-s{index_id}*R1*")
     dir_1_filename = glob(
@@ -42,11 +42,10 @@ bowtie2 -f --threads {cpus} -x {project_config.project_dir}/indexes/{index_id}_i
 {sbatch_cmds}
 """
 
-    print(dir_1_filename, index_id, reads_sample_id)
-    utils.run_slurm_job(sbatch_text,
-                        f"align_index_{index_id}_reads_{reads_sample_id}",
-                        project_config)
-
+    logging.debug(dir_1_filename, index_id, reads_sample_id)
+    #utils.run_slurm_job(sbatch_text,
+    #                    f"align_index_{index_id}_reads_{reads_sample_id}",
+    #                    project_config)
 
 def run_all_samples(slurm_settings, project_config, sequence_name_list):
     # For each sequence
@@ -54,6 +53,7 @@ def run_all_samples(slurm_settings, project_config, sequence_name_list):
     for index in sequences:
         index_id = index.split(".fasta")[0].split(
             f"{project_config.project_dir}/indexes")[1]
+        index_id = index_id.strip()
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
@@ -66,6 +66,7 @@ def run_all_true_auto_samples(slurm_settings, project_config, sequence_name_list
     for index in sequences:
         index_id = index.split(".fasta")[0].split(
             f"{project_config.project_dir}/indexes")[1]
+        index_id = index_id.strip()
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
@@ -79,6 +80,7 @@ def run_all_allo_samples(slurm_settings, project_config, sequence_name_list):
     for index in sequences:
         index_id = index.split(".fasta")[0].split(
             f"{project_config.project_dir}/indexes")[1]
+        index_id = index_id.strip()
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
@@ -92,6 +94,7 @@ def run_all_taxon_auto_samples(slurm_settings, project_config, sequence_name_lis
     for index in sequences:
         index_id = index.split(".fasta")[0].split(
             f"{project_config.project_dir}/indexes")[1]
+        index_id = index_id.strip()
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
@@ -111,6 +114,7 @@ def run_all_intra_lane_samples(slurm_settings, project_config, sequence_name_lis
     for index in sequences:
         index_id = index.split(".fasta")[0].split(
             f"{project_config.project_dir}/indexes")[1]
+        index_id = index_id.strip()
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
@@ -142,6 +146,7 @@ def run_all_cross_lane_samples(slurm_settings, project_config, sequence_name_lis
     for index in sequences:
         index_id = index.split(".fasta")[0].split(
             f"{project_config.project_dir}/indexes")[1]
+        index_id = index_id.strip()
         # For each sample
         for i in range(1, project_config.num_samples + 1):
             reads_sample_id = str(i).zfill(3)
