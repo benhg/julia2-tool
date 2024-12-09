@@ -116,7 +116,7 @@ def run_all_intra_lane_samples(system_config, project_config, sequence_name_list
                 reads_lane = 1
             else:
                 reads_lane = 2
-            if int(index_id.split("s")[1]) <= project_config.num_samples_per_lane - 1:
+            if int(index_id.split("s")[1].split("_")[0]) <= project_config.num_samples_per_lane - 1:
                 index_lane = 1
             else:
                 index_lane = 2
@@ -146,7 +146,7 @@ def run_all_cross_lane_samples(system_config, project_config, sequence_name_list
                 reads_lane = 1
             else:
                 reads_lane = 2
-            if int(index_id.split("s")[1]) <= project_config.num_samples_per_lane - 1:
+            if int(index_id.split("s")[1].split("_")[0]) <= project_config.num_samples_per_lane - 1:
                 index_lane = 1
             else:
                 index_lane = 2
