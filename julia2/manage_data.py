@@ -46,7 +46,7 @@ def create_blank_project(project_config, system_config):
     project_name = project_config.project_name
 
     if not os.path.exists(project_path):
-        os.makedirs(project_path exist_ok=True)
+        os.makedirs(project_path, exist_ok=True)
     else:
         res = input("WARNING: Project already exists. Continue anyways? y/N")
         if res.lower() != "y":
@@ -61,7 +61,8 @@ def create_blank_project(project_config, system_config):
     os.makedirs(f"{project_path}/slurm_jobs", exist_ok=True)
     os.makedirs(f"{project_path}/logs", exist_ok=True)
     os.makedirs(f"{project_path}/output", exist_ok=True)
-    os.makedirs(f"{project_path}/output/alignment_database_data", exist_ok=True)
+    os.makedirs(f"{project_path}/output/alignment_database_data",
+                exist_ok=True)
     os.makedirs(f"{project_path}/output/index_creation")
 
     # Make output files
@@ -80,5 +81,3 @@ def delete_project(project_config, system_config):
     if res.lower() == "y":
         os.rmdirs(project_config.project_path)
         system_config.projects[project_config.project_name] = None
-
-

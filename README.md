@@ -119,6 +119,7 @@ Each step above produces and requires different data. This is a list:
 Prerequisites:
 
 1. Bowtie2
+2. SLURM cluster (local mode to follow)
 
 ## Usage
 
