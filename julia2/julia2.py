@@ -90,6 +90,12 @@ def create_index_fasta_from_raw_reads(args, system_config, project_config):
     """
     create_index.find_reads(args.file, args.read_id, project_config)
 
+def cleanup_index_fastas(args, system_config, project_config):
+    """
+    Clean up the index directory. Take any FASTA whose job is finished and put it in the directory that exists for its index
+    """
+    create_index.cleanup_index_fastas(project_config)
+
 def run_alignments(args, system_config, project_config):
     func_to_align_set = {
         "all": align.run_all_samples,
@@ -157,7 +163,8 @@ act_to_func = {
         "create_indexes": create_indexes,
         "run_alignmnents": run_alignments,
         "update_database": update_database,
-        "generate_output": generate_output
+        "generate_output": generate_output,
+        "cleanup_index_fastas": cleanup_index_fastas
     }
 
 def main():
