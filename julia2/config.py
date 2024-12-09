@@ -28,7 +28,6 @@ class SystemConfig:
     def from_json(json_data: str) -> 'SystemConfig':
         """Parses JSON text into a SystemConfig object."""
         data = json.loads(json_data)
-        print(json.dumps(data, indent=2))
         slurm_settings = SlurmSettings(**data['slurm_settings'])
         return SystemConfig(slurm_settings=slurm_settings,
                             use_slurm=data['use_slurm'],

@@ -111,7 +111,7 @@ def update_database(project_config):
 
                     writer.writerow(row)
                 except Exception as e:
-
+                    raise e
                     if "list index out of range":
                         print(f"File {file} is still running")
                         continue
