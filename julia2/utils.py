@@ -4,6 +4,7 @@ Utility functions for the project
 import subprocess
 import sys
 import logging
+import shutil
 
 logger = logging.getLogger("julia2.utils")
 
@@ -132,3 +133,27 @@ def setup_logging(project_config, log_level: int = logging.DEBUG):
             logging.StreamHandler(sys.stdout)         # Log to console
         ]
     )
+
+def move_with_exist_ok(src: str, dst: str, exist_ok: bool = False):
+    """
+    Move a file or directory with optional `exist_ok` behavior.
+
+    Args:
+        src (str): The source path.
+        dst (str): The destination path.
+        exist_ok (bool): If True, overwrite the destination if it exists.
+                         If False, raise an error if the destination exists.
+    """
+    if os.path.exists(dst):
+        if exist_ok:
+            # Remove the existing destination if it's a file
+            if os.path.isfile(dst) or os.path.islink(dst):
+                os.remove(dst)
+            # If it's a directory, remove it and its contents
+            elif os.path.isdir(dst):
+                shutil.rmtree(dst)
+        else:
+            raise FileExistsError(f"Destination '{dst}' already exists.")
+    
+    # Perform the move
+    shutil.move(src, dst)

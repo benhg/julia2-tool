@@ -7,7 +7,6 @@ They'll go into {project_config.project_dir}/indexes
 import subprocess
 from Bio import SeqIO
 import glob
-import shutil
 import os
 import logging
 
@@ -71,7 +70,7 @@ def cleanup_index_fastas(project_config):
         dir_name = os.path.dirname(file)
         if os.path.isdir(dir_name):
             logger.debug(f"move file {file} to {dir_name}")
-            shutil.move(file, dir_name)
+            utils.move_with_exist_ok(file, dir_name, exist_ok=True)
 
 
 def create_all_indexes_for_new_fasta(new_fasta_path, system_config, project_config):
