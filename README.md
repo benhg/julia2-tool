@@ -52,7 +52,9 @@ Each step above produces and requires different data. This is a list:
 │   │   ├── index_01_sample_02.out
 │   │   ├── index_02_sample_01.out
 │   │   └── index_02_sample_02.out
-│   └── hopping_results.csv
+│   ├── hopping_results.csv
+│   └── index_creation
+│       └── index_01.out
 ├── raw_reads
 │   ├── sample1.fasta
 │   └── sample2.fasta
@@ -61,6 +63,8 @@ Each step above produces and requires different data. This is a list:
     ├── align2.sh
     ├── index.sh
     └── index1.sh
+
+10 directories, 19 files
 ```
 
 - Intermediate output (from the running of the alignments) will go into `alignment_database_data`

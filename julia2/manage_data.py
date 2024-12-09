@@ -62,6 +62,7 @@ def create_blank_project(project_config, system_config):
     os.makedirs(f"{project_path}/logs", exist_ok=True)
     os.makedirs(f"{project_path}/output", exist_ok=True)
     os.makedirs(f"{project_path}/output/alignment_database_data", exist_ok=True)
+    os.makedirs(f"{project_path}/output/index_creation")
 
     # Make output files
     with open(f"{project_path}/output/alignment_database.csv", "a"):

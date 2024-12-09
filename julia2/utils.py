@@ -43,7 +43,7 @@ def convert_to_fasta(input_file, output_file):
             outfile.write(''.join(sequence) + "\n")
 
 
-def create_sbatch_template(commands, slurm_settings, cpus=True):
+def create_sbatch_template(commands, slurm_settings, project_config, cpus=True, align_index="ALIGN"):
 	"""
 	Create an SBatch file - return the text and the number of CPUs
 	"""
@@ -54,6 +54,11 @@ def create_sbatch_template(commands, slurm_settings, cpus=True):
 	if cpus == True:
 		cpus = slurm_settings.nodes[node]
 
+	if align_index == "ALIGN":
+		out_dir = f"{project_config.project_path}/output/alignment_database_data"
+	else:
+		out_dir = f"{project_config.project_path}/output/index_creation"
+
 	sbatch_template = f"""#!/bin/bash
 #SBATCH --cpus-per-task={cpus}
 #SBATCH --partition {slurm_settings.partition}
@@ -61,6 +66,8 @@ def create_sbatch_template(commands, slurm_settings, cpus=True):
 #SBATCH --mail-type BEGIN
 #SBATCH --mail-type END
 #SBATCH --mail-type FAIL
+#SBATCH -e {out_dir}/slurm-%j.err
+#SBATCH -o {out_dir}/slurm-%j.out
 
 {commands}
 """
