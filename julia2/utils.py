@@ -111,7 +111,7 @@ def run_slurm_job(sbatch_text, sbatch_name, project_config):
             shell=True))
 
 
-def setup_logging(project_config, log_level: int = logging.DEBUG):
+def setup_logging(project_config, log_level: int = logging.INFO):
     """
     Set up basic logging configuration.
 
