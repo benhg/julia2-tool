@@ -116,10 +116,25 @@ Each step above produces and requires different data. This is a list:
 
 ## Installation
 
-Prerequisites:
+### Prerequisites:
 
 1. Bowtie2
 2. SLURM cluster (local mode to follow)
+3. Biopython
+
+### Dev installation:
+
+```
+git clone https://github.com/benhg/julia2-tool
+cd julia2-tool
+python3 setup.py install
+```
+
+### `pip` installation:
+
+```
+pip install julia2-tool
+```
 
 ## Usage
 
