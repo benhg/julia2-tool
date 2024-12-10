@@ -8,13 +8,13 @@ import argparse
 import os
 import logging
 
-import config
-import manage_data
-import create_index
-import final_output
-import database
-import utils
-import align
+import julia2.config as config
+import julia2.manage_data as manage_data
+import julia2.create_index as create_index
+import julia2.final_output as final_output
+import julia2.database as database
+import julia2.utils as utils
+import julia2.align as align
 
 """
 Public API

@@ -12,7 +12,7 @@ import logging
 
 logger = logging.getLogger("julia2.create_index")
 
-import utils
+import julia2.utils as utils
 
 
 def split_fasta_file_into_indexes(new_fasta_path, project_config):

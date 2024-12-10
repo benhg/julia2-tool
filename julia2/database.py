@@ -11,7 +11,7 @@ import logging
 
 logger = logging.getLogger("julia2.database")
 
-import utils
+import julia2.utils as utils
 
 headers = [
     "reads_sample", "reads_taxon", "index_sample", "index_taxon", "num_reads",

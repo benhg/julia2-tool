@@ -12,7 +12,7 @@ import os
 
 logger = logging.getLogger("julia2.align")
 
-import utils
+import julia2.utils as utils
 
 def run_alignment(reads_sample_id, index_id, system_config, project_config):
     # TODO: Handle more than 2 lanes

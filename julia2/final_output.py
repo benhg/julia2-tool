@@ -9,10 +9,10 @@ import logging
 
 logger = logging.getLogger("julia2.final_output")
 
-import utils
+import julia2.utils as utils
 
 # Database headers list is only stored in database.py file
-from database import headers
+from julia2.database import headers
 
 
 def hopper_threshold(value):
