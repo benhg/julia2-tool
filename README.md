@@ -59,6 +59,9 @@ Each step above produces and requires different data. This is a list:
 ├── raw_reads
 │   ├── sample1.fasta
 │   └── sample2.fasta
+|── assembled_untranslated_transcripts 
+|   ├──transcript1.fasta
+|   ├──transcript2.fasta
 └── slurm_jobs
     ├── align1.sh
     ├── align2.sh

@@ -88,8 +88,10 @@ def find_reads(file, read_id, out_file, project_config):
     Given a list (newline separated) of sequences of interest and a read ID (name/filename), extract those sequences into a .fasta
 
     That fasta can be used for the create_all_indexes_for_new_fasta
+
+    This must read through assembled untranslated
     """
-    reads_file = glob.glob(f"{project_config.project_dir}/raw_reads/*{read_id}*R1*")
+    reads_file = glob.glob(f"{project_config.project_dir}/assembled_untranslated_transcripts/*{read_id}*")
     if len(reads_file) > 1 or len(reads_file) == 0:
         logger.error(f"Found incorrect number of raw reads. Check configuration. Read ID: {read_id}, n=={len(reads_file)}")
         return
