@@ -69,12 +69,13 @@ def create_blank_project(project_config, system_config):
     os.makedirs(f"{project_dir}/output/alignment_database_data",
                 exist_ok=True)
     os.makedirs(f"{project_dir}/output/index_creation", exist_ok=True)
+    os.makedirs(f"{project_dir}/assembled_untranslated_transcripts", exist_ok=True)
 
     # Make output files
     with open(f"{project_dir}/output/alignment_database.csv", "a"):
         os.utime(f"{project_dir}/output/alignment_database.csv", None)
 
-    with open(f"{project_dir}/output/hoppingg_results.csv", "a"):
+    with open(f"{project_dir}/output/hopping_results.csv", "a"):
         os.utime(f"{project_dir}/output/alignment_database.csv", None)
 
 

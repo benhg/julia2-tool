@@ -35,24 +35,24 @@ Each step above produces and requires different data. This is a list:
 - Organize the directories like this:
 ```
 .
-├── config.json
-├── indexes
-│   ├── seq1_index
-│   │   ├── seq1_index.btl2
-│   │   └── seq1_index.fasta
+├── project_config.json // The project configuration file. See example_project_config.json for explanation
+├── indexes // The indexes directory
+│   ├── seq1_index // Each sequence gets an index subdirectory
+│   │   ├── seq1_index.btl2 // Each index has its own Bowtie2 index files
+│   │   └── seq1_index.fasta // The sequence's FASTA file is also placed here
 │   └── seq2_index
 │       ├── seq2_index.btl2
 │       └── seq2_index.fasta
 ├── logs
 │   └── julia2.log
 ├── output
-│   ├── alignment_database.csv
-│   ├── alignment_database_data
+│   ├── alignment_database.csv // This intermediate database contains information about how many sequences from each sample mapped to indexes
+│   ├── alignment_database_data // This is where the data for the alignment database goes
 │   │   ├── index_01_sample_01.out
 │   │   ├── index_01_sample_02.out
 │   │   ├── index_02_sample_01.out
 │   │   ├── index_02_sample_02.out
-│   │   └── raw
+│   │   └── raw // This is where the raw SAM files that come out of Bowtie2 go in case they are needed for detailed analysis
 │   ├── hopping_results.csv
 │   └── index_creation
 │       └── index_01.out
