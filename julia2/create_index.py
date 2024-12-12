@@ -55,7 +55,7 @@ bowtie2-build --threads {cpus} {project_config.project_dir}/indexes/{index_name}
 {sbatch_commands_template}
 """
     logger.debug(f"Creating index for {index_name}")
-    utils.run_slurm_job(sbatch_text, f"index_{os.path.basename(index_name)}", project_config)
+    utils.run_slurm_job(sbatch_text, f"index_{os.path.basename(index_name)}", project_config, system_config)
 
 
 def cleanup_index_fastas(project_config):
