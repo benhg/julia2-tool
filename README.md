@@ -53,16 +53,16 @@ Each step above produces and requires different data. This is a list:
 │   │   ├── index_02_sample_01.out
 │   │   ├── index_02_sample_02.out
 │   │   └── raw // This is where the raw SAM files that come out of Bowtie2 go in case they are needed for detailed analysis
-│   ├── hopping_results.csv
-│   └── index_creation
+│   ├── hopping_results.csv // The results from the analysis come here
+│   └── index_creation // Index creation output files go here. The indexes go to the indexes/ directory though.
 │       └── index_01.out
-├── raw_reads
+├── raw_reads // Place your raw reads here
 │   ├── sample1.fasta
 │   └── sample2.fasta
-|── assembled_untranslated_transcripts 
+|── assembled_untranslated_transcripts // Place assembled, untranslated transcripts from Trinity here
 |   ├──transcript1.fasta
 |   ├──transcript2.fasta
-└── slurm_jobs
+└── slurm_jobs // Slurm submit scripts go here
     ├── align1.sh
     ├── align2.sh
     ├── index.sh
@@ -178,6 +178,47 @@ Generally, follow the steps in the section "steps to detect index hopping". Exam
 9. Run alignments of raw reads against your indexes. Make sure you are providing a newline-separated list of sequence names in the `--file` option
 10. Create a database from the alignments you ran using `update_database`
 11. Create an index hopping report using `generate_output`
+
+## Database Field Meanings
+
+This section explains the fields in the database file
+
+| Field                   | Description                                                                                                                                                                                                                                             |
+|-------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| reads_sample            | The sample ID that the reads came from (e.g. "s022")                                                                                                                                                                                                    |
+| reads_taxon             | The name of the taxon that the reads came from (e.g. "Drymusa Serrana")                                                                                                                                                                                 |
+| index_sample            | The sample ID that the index was generated from - note that determining the accuracy of this label is the point of this project                                                                                                                         |
+| index_taxon             | The taxon that the sequence is labelled as coming from - note that determining the accuracy of this label is the point of this project                                                                                                                  |
+| num_reads               | The number of raw reads in the raw_reads file                                                                                                                                                                                                           |
+| pairtype                | The "type" of pair between the taxon of the reads and the presumptive taxon of the index. The options are "True auto" (they come from the same sample), "Taxon auto" (the same taxon, but a different sample), and "Allo" (Different taxon and sample)  |
+| num_aligned_none        | The number of reads that do not align to the index                                                                                                                                                                                                      |
+| num_aligned_once        | The number of reads that align exactly once to the index                                                                                                                                                                                                |
+| num_aligned_multiple    | The number of reads that align multiple times to the index                                                                                                                                                                                              |
+| none_alignment_rate     | The alignment rate of reads that do not align at all (the number that didn't align divided by the total number of reads)                                                                                                                                |
+| single_alignment_rate   | The alignment rate of reads that align exactly once (the number that aligned once divided by the total number of reads)                                                                                                                                 |
+| multiple_alignment_rate | The alignment rate of reads that align more than once (the number that aligned multiply divided by the total number of reads)                                                                                                                           |
+| num_aligned_any         | The sum of reads that aligned once and multiply                                                                                                                                                                                                         |
+| alignment_rate          | The num_aligned_any column divided by the num_reads column                                                                                                                                                                                              |
+| exec_time               | The time the alignment run took to run to completion                                                                                                                                                                                                    |
+|                         |                                                                                                                                                                                                                                                         |
+
+## Final Output Field Meanings
+
+This section explains the fields in the final output file which indicates if hopping likely occurred on this sequence
+
+| Field                                 | Description                                                                                                                                                                                          |
+|---------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| sequence_name                         | The name of the sequence of interest (the index)                                                                                                                                                     |
+| hopper_status                         | Whether this sequence is likely to be an index hopper or not. Options: LIKELY_HOPPER, MAYBE_HOPPER (there is some evidence but not enough to be confident), and NOT_HOPPER                           |
+| source_index_taxon_labelled           | The taxon that this sequence is labelled as                                                                                                                                                          |
+| total_reads_mapped                    | The number of reads that mapped to this sequence from all reads                                                                                                                                      |
+| num_reads_max_sample                  | The number of mapped reads from the sample that mapped the most times                                                                                                                                |
+| read_max_sample                       | The sample ID of the set of raw reads that had the most reads map to this sequence. If the sequence is a hopper, it likely hopped from this sample.                                                  |
+| read_max_taxon                        | The taxon name of the set of raw reads that had the most reads map to this sequence. If the sequence is a hopper, it likely hopped from this taxon.                                                  |
+| percent_reads_from_max                | The percentage of reads that came from the sample that had the most reads (the read_max_taxon coumn / the total_reads_mapped column)                                                                 |
+| num_reads_from_labelled_true_auto     | The number of reads that came from the sample labelled as taxon auto                                                                                                                                 |
+| percent_reads_from_labelled_true_auto | The percentage of reads that came from the sample labelled as taxon auto (the num_reads_from_labelled_true_auto column / the total_reads_mapped column)                                              |
+| threshold_metric                      | The ratio of the percentage of reads from the sample that mapped the most to the percentage of reads from the labelled true auto. This is used to determine whether the sequence is likely a hopper. |
 
 
 ## Example usage(s)

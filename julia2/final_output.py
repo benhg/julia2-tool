@@ -50,7 +50,7 @@ def create_final_output(project_config):
 
     out_headers = [
         "sequence_name", "hopper_status", "source_index_taxon_labelled",
-        "total_reads_mapped", "read_max_sample", "read_max_taxon",
+        "total_reads_mapped", "read_max_sample", "read_max_taxon", "num_reads_max_sample",
         "percent_reads_from_max", "num_reads_from_labelled_true_auto",
         "percent_reads_from_labelled_true_auto", "threshold_metric"
     ]
@@ -94,6 +94,7 @@ def create_final_output(project_config):
             "total_reads_mapped": total_single_aligned,
             "read_max_sample": max_aligned_read,
             "read_max_taxon": max_aligned_taxon,
+            "num_reads_max_sample": max_aligned_num,
             "percent_reads_from_max": percent_reads_from_max,
             "num_reads_from_labelled_true_auto": aligned_num_auto,
             "percent_reads_from_labelled_true_auto": percent_reads_from_auto,
