@@ -96,7 +96,7 @@ def create_sbatch_template(slurm_settings,
     return sbatch_template, cpus
 
 
-def run_slurm_job(sbatch_text, sbatch_name, project_config):
+def run_slurm_job(sbatch_text, sbatch_name, project_config, system_config):
     """
     Submit a Slurm job with SBatch text passed in
 
@@ -105,10 +105,15 @@ def run_slurm_job(sbatch_text, sbatch_name, project_config):
     with open(f"{project_config.project_dir}/slurm_jobs/{sbatch_name}.sh",
               "w") as fh:
         fh.write(sbatch_text)
-    logging.info(
-        subprocess.check_output(
-            f"sbatch {project_config.project_dir}/slurm_jobs/{sbatch_name}.sh",
-            shell=True))
+        if system_config.use_slurm:
+            logging.info(
+            subprocess.check_output(
+                f"sbatch {project_config.project_dir}/slurm_jobs/{sbatch_name}.sh",
+                shell=True))
+        else:
+            logging.info(subprocess.check_output(
+                f"/bin/bash {project_config.project_dir}/slurm_jobs/{sbatch_name}.sh &",
+                shell=True))
 
 
 def setup_logging(project_config, log_level: int = logging.INFO):

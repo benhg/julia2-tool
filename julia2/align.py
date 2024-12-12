@@ -40,7 +40,7 @@ bowtie2 -f --threads {cpus} -x {project_config.project_dir}/indexes/{index_id}_i
 """
     utils.run_slurm_job(sbatch_text,
                         f"align_index_{index_id}_reads_{reads_sample_id}",
-                        project_config)
+                        project_config, system_config)
 
 def run_all_samples(system_config, project_config, sequence_name_list):
     # For each sequence
