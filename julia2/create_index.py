@@ -117,7 +117,7 @@ def find_reads(file, read_id, out_file, project_config):
                 # Example seq: "s001_c1352_g1_i2_m.158_LAZ"
                 # Need to compare only the cxxxxxx part
                 # Add the _ to force the whole thing to match
-                if f"{sequence.strip().split("_")[1]}_" in f"{record.id}":
+                if f"{sequence.strip().split('_')[1]}_" in f"{record.id}":
                     header = record.id
                     sequence_count += 1
                     if read_id not in header.split(" ")[0]:
@@ -162,8 +162,8 @@ def find_reads_many(file, out_file, project_config):
             for record in raw_reads:
                 # Example seq: "s001_c1352_g1_i2_m.158_LAZ"
                 # Need to compare only the cxxxxxx part
-
-                if sequence.strip().split("_")[1] in f"{record.id}":
+                # Add the _ to force the whole thing to match
+                if f"{sequence.strip().split('_')[1]}_" in f"{record.id}":
                     header = record.id
                     sequence_count += 1
                     if read_id not in header.split(" ")[0]:
@@ -171,6 +171,7 @@ def find_reads_many(file, out_file, project_config):
                     logger.debug(f"Found sequence {sequence} in read {read_id}. Title {header}")
                     out_handle.write(f">{header}\n")
                     out_handle.write(f"{record.seq}\n")
+                    break
 
                 if sequence_count == len(sequences):
                     return
