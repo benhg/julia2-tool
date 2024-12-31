@@ -110,7 +110,10 @@ def find_reads(file, read_id, out_file, project_config):
         with open(reads_file, "r") as reads_handle:
             raw_reads = SeqIO.parse(reads_handle, "fasta")
             for record in raw_reads:
-                if sequence.strip() in f"{read_id}_{record.id}":
+                # Example seq: "s001_c1352_g1_i2_m.158_LAZ"
+                # Need to compare only the cxxxxxx part
+
+                if sequence.strip().split("_")[1] in f"{record.id}":
                     header = record.id
                     sequence_count += 1
                     if read_id not in header.split(" ")[0]:
