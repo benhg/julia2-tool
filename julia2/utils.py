@@ -102,9 +102,11 @@ def run_slurm_job(sbatch_text, sbatch_name, project_config, system_config):
 
     sbatch_name must not contain any /
     """
+    logger.debug(f"Creating sbatch file at {project_config.project_dir}/slurm_jobs/{sbatch_name}.sh")
     with open(f"{project_config.project_dir}/slurm_jobs/{sbatch_name}.sh",
               "w") as fh:
         fh.write(sbatch_text)
+        logging.debug(f"Command: [sbatch] {project_config.project_dir}/slurm_jobs/{sbatch_name}.sh")
         if system_config.use_slurm:
             logging.info(
             subprocess.check_output(
