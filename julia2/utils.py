@@ -106,16 +106,17 @@ def run_slurm_job(sbatch_text, sbatch_name, project_config, system_config):
     with open(f"{project_config.project_dir}/slurm_jobs/{sbatch_name}.sh",
               "w") as fh:
         fh.write(sbatch_text)
-        logging.debug(f"Command: [sbatch] {project_config.project_dir}/slurm_jobs/{sbatch_name}.sh")
-        if system_config.use_slurm:
-            logging.info(
-            subprocess.check_output(
-                f"sbatch {project_config.project_dir}/slurm_jobs/{sbatch_name}.sh",
-                shell=True))
-        else:
-            logging.info(subprocess.check_output(
-                f"/bin/bash {project_config.project_dir}/slurm_jobs/{sbatch_name}.sh &",
-                shell=True))
+    
+    logging.debug(f"Command: [sbatch] {project_config.project_dir}/slurm_jobs/{sbatch_name}.sh")
+    if system_config.use_slurm:
+        logging.info(
+        subprocess.check_output(
+            f"sbatch {project_config.project_dir}/slurm_jobs/{sbatch_name}.sh",
+            shell=True))
+    else:
+        logging.info(subprocess.check_output(
+            f"/bin/bash {project_config.project_dir}/slurm_jobs/{sbatch_name}.sh &",
+            shell=True))
 
 
 def setup_logging(project_config, log_level: int = logging.DEBUG):
