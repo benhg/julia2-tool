@@ -91,6 +91,14 @@ def create_index_fasta_from_raw_reads(args, system_config, project_config):
     """
     create_index.find_reads(args.file, args.read_id, args.output_file, project_config)
 
+def create_index_fasta_many_reads(args, system_config, project_config):
+    """
+    Create a new index .fasta file from a list of sequences, in a newline-delimited plain text list, passed into -f option
+
+    Do not set the -r option, and infer the read from the sequence name
+    """
+    create_index.find_reads_many(args.file, args.output_file, project_config)
+
 def cleanup_index_fastas(args, system_config, project_config):
     """
     Clean up the index directory. Take any FASTA whose job is finished and put it in the directory that exists for its index
@@ -165,6 +173,7 @@ act_to_func = {
         "configure_project": config.create_project_config,
         "configure_system": configure_system,
         "create_index_fasta_from_raw_reads": create_index_fasta_from_raw_reads,
+        "create_index_fasta_many_reads": create_index_fasta_many_reads,
         "create_indexes": create_indexes,
         "run_alignments": run_alignments,
         "update_database": update_database,

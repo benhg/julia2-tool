@@ -124,6 +124,51 @@ def find_reads(file, read_id, out_file, project_config):
 
                 if sequence_count == len(sequences):
                     return
+
+def find_reads_many(file, out_file, project_config):
+    """
+    Given a list (newline separated) of sequences of interest and a read ID (name/filename), extract those sequences into a .fasta
+
+    That fasta can be used for the create_all_indexes_for_new_fasta
+
+    This must read through assembled untranslated
+    """
+
+    out_handle = open(out_file, "w")
+
+    sequences = ""
+    with open(file, "r") as fh:
+        sequences = fh.readlines()
+
+    sequence_count = 0
+    for sequence in sequences:
+
+        read_id = sequence.split("_")[0]
+        reads_file = glob.glob(f"{project_config.project_dir}/assembled_untranslated_transcripts/*{read_id}*")
+        if len(reads_file) > 1 or len(reads_file) == 0:
+            logger.error(f"Found incorrect number of raw reads. Check configuration. Read ID: {read_id}, n=={len(reads_file)}")
+            return
+        reads_file = reads_file[0]
+
+        logger.debug(f"searching for sequence {sequence} in read {read_id}")
+        with open(reads_file, "r") as reads_handle:
+            raw_reads = SeqIO.parse(reads_handle, "fasta")
+            for record in raw_reads:
+                # Example seq: "s001_c1352_g1_i2_m.158_LAZ"
+                # Need to compare only the cxxxxxx part
+
+                if sequence.strip().split("_")[1] in f"{record.id}":
+                    header = record.id
+                    sequence_count += 1
+                    if read_id not in header.split(" ")[0]:
+                        header = f"{read_id}_{header}"
+                    logger.debug(f"Found sequence {sequence} in read {read_id}. Title {header}")
+                    out_handle.write(f">{header}\n")
+                    out_handle.write(f"{record.seq}\n")
+
+                if sequence_count == len(sequences):
+                    return
+                    
                     
 
 
