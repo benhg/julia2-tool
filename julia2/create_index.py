@@ -147,6 +147,7 @@ def find_reads_many(file, out_file, project_config):
         sequences = fh.readlines()
 
     sequence_count = 0
+    # TODO: parallelize across sequences since the data is read-only
     for sequence in sequences:
 
         read_id = sequence.split("_")[0]
