@@ -106,7 +106,7 @@ def run_slurm_job(sbatch_text, sbatch_name, project_config, system_config):
     with open(f"{project_config.project_dir}/slurm_jobs/{sbatch_name}.sh",
               "w") as fh:
         fh.write(sbatch_text)
-    
+
     logging.debug(f"Command: [sbatch] {project_config.project_dir}/slurm_jobs/{sbatch_name}.sh")
     if system_config.use_slurm:
         logging.info(
@@ -119,7 +119,7 @@ def run_slurm_job(sbatch_text, sbatch_name, project_config, system_config):
             shell=True))
 
 
-def setup_logging(project_config, log_level: int = logging.DEBUG):
+def setup_logging(project_config, log_level: int = logging.ERROR):
     """
     Set up basic logging configuration.
 

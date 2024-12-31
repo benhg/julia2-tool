@@ -94,8 +94,9 @@ def run_all_taxon_auto_samples(system_config, project_config, sequence_name_list
             if "c49446" in index_sample_id:
                 index_sample_id = "s018"
             if project_config.sample_to_taxon_short[index_sample_id] == project_config.sample_to_taxon_short[f"s{reads_sample_id}"]:
-                run_alignment(reads_sample_id, index_id, system_config,
-                              project_config)
+                #run_alignment(reads_sample_id, index_id, system_config,
+                #              project_config)
+                print(f"Running Job for {reads_sample_id}, {index_sample_id}, {project_config.sample_to_taxon_short[index_sample_id]}, {project_config.sample_to_taxon_short['s'+str(reads_sample_id)] }")
 
 def run_all_intra_lane_samples(system_config, project_config, sequence_name_list):
 
