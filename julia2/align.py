@@ -65,7 +65,7 @@ def run_all_true_auto_samples(system_config, project_config, sequence_name_list)
             if f"s{reads_sample_id}_" in index_id:
                 #run_alignment(reads_sample_id, index_id, system_config,
                 #             project_config)
-                print(f"Running Job for {reads_sample_id}, {index_sample_id}, {project_config.sample_to_taxon_short[index_sample_id]}, {project_config.sample_to_taxon_short['s'+str(reads_sample_id)] }")
+                print(f"Running Job for {reads_sample_id}, {index_id}, {project_config.sample_to_taxon_short[index_id]}, {project_config.sample_to_taxon_short['s'+str(reads_sample_id)] }")
 
 
 def run_all_allo_samples(system_config, project_config, sequence_name_list):
