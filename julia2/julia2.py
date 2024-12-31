@@ -95,7 +95,7 @@ def create_index_fasta_many_reads(args, system_config, project_config):
     """
     Create a new index .fasta file from a list of sequences, in a newline-delimited plain text list, passed into -f option
 
-    Do not set the -r option, and infer the read from the sequence name
+    Do not set the -i option, instead infer the read from the sequence name
     """
     create_index.find_reads_many(args.file, args.output_file, project_config)
 
