@@ -55,6 +55,7 @@ bowtie2-build --threads {cpus} {project_config.project_dir}/indexes/{index_name}
 {sbatch_commands_template}
 """
     logger.debug(f"Creating index for {index_name}")
+    logger.debug(f"SBatch text: {sbatch_text}")
     utils.run_slurm_job(sbatch_text, f"index_{os.path.basename(index_name)}", project_config, system_config)
 
 
@@ -89,7 +90,9 @@ def find_reads(file, read_id, out_file, project_config):
 
     That fasta can be used for the create_all_indexes_for_new_fasta
 
-    This must read through assembled untranslated
+    This must read the assembled untranslated
+
+    This is useful when your sequences of interest don't have sXXXX in their names, but you know what sample they come from
     """
     reads_file = glob.glob(f"{project_config.project_dir}/assembled_untranslated_transcripts/*{read_id}*")
     if len(reads_file) > 1 or len(reads_file) == 0:
@@ -133,11 +136,13 @@ def find_reads(file, read_id, out_file, project_config):
 
 def find_reads_many(file, out_file, project_config):
     """
-    Given a list (newline separated) of sequences of interest and a read ID (name/filename), extract those sequences into a .fasta
+    Given a list (newline separated) of sequences of interest, extract those sequences into a .fasta
+
+    Assumes that the read name will have sXXX in front, separated by underscore.
 
     That fasta can be used for the create_all_indexes_for_new_fasta
 
-    This must read through assembled untranslated
+    This must read the assembled untranslated
     """
 
     out_handle = open(out_file, "w")
