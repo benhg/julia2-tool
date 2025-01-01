@@ -81,7 +81,7 @@ def create_sbatch_template(slurm_settings,
 #SBATCH --mail-type BEGIN
 #SBATCH --mail-type END
 #SBATCH --mail-type FAIL
-#SBATCH -e {out_dir}/slurm-%j.err
+#SBATCH -e {out_dir}/slurm-%j.out
 #SBATCH -o {out_dir}/slurm-%j.out
 """
     logging.debug(f"Running slurm job on node {node} with CPUs {cpus}")

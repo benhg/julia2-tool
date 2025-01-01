@@ -20,6 +20,13 @@ headers = [
     "num_aligned_any", "alignment_rate", "exec_time"
 ]
 
+def combine_out_err_files(project_config):
+    """
+    In case SLURM out and error files get separated, we neeed to fold them all into the corresponding .out file
+    """
+    out_path = f"{project_config.project_dir}/output/alignment_database_data/slurm-*.*"
+    # This should only ever return 2 files.
+    # Combine the .out and the .err into .out, with the .out first
 
 def update_database(project_config):
     """
