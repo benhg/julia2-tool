@@ -4,6 +4,7 @@ Generate a Summary CSV based on the Bowtie alignment output(s)
 Summary contains the information that Bowtie produced as well as where to get the full SAM file
 """
 from glob import glob
+import os
 import csv
 import subprocess
 import sys
@@ -46,6 +47,7 @@ def update_database(project_config):
     with open(output_file, "a") as fh:
         writer = csv.DictWriter(fh, fieldnames=headers)
         all_files = glob(path)
+        all_files.sort(key=os.path.getmtime)
         #TODO: Run this in parallel since sacct command runs pretty slow
         for file in all_files:
             with open(file) as fh2:
