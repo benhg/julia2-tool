@@ -91,6 +91,12 @@ def create_index_fasta_from_raw_reads(args, system_config, project_config):
     """
     create_index.find_reads(args.file, args.read_id, args.output_file, project_config)
 
+def check_index_creation_err(args, system_config, project_config):
+    """
+    Check the index creation history for errors. Report to stdout
+    """
+    create_index.check_index_creation_err(project_config)
+
 def create_index_fasta_many_reads(args, system_config, project_config):
     """
     Create a new index .fasta file from a list of sequences, in a newline-delimited plain text list, passed into -f option
@@ -178,7 +184,8 @@ act_to_func = {
         "run_alignments": run_alignments,
         "update_database": update_database,
         "generate_output": generate_output,
-        "cleanup_index_fastas": cleanup_index_fastas
+        "cleanup_index_fastas": cleanup_index_fastas,
+        "check_index_creation_err": check_index_creation_err
     }
 
 def main():

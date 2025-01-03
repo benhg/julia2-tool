@@ -182,6 +182,14 @@ def find_reads_many(file, out_file, project_config):
                 if sequence_count == len(sequences):
                     return
                     
-                    
-
+def check_index_creation_err(project_config):
+    """
+    Check all past index creation runs for errors.
+    """
+    stderr_files = glob.glob(f"{project_config.project_dir}/output/index_creation/slurm-*.*")
+    for file in stderr_files:
+        with open(file) as fh:
+            txt = file.read()
+            if "Error: Encountered Internal Bowtie2 Exception" in txt:
+                logger.error(f"File {file} reported error")
 
