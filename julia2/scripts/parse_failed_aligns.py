@@ -11,7 +11,7 @@ failed_details = {}
 with open(failed) as fh:
 	failed_files = fh.readlines()
 	for file in failed_files:
-		file = file.strip()
+		file = file.split("failed for file ")[1].strip()
 		data = open(file).readlines()
 		index = data[0].split(" ")[0].split("index_")[1]
 		if failed_details.get(index) is None:
