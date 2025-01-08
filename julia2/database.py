@@ -60,6 +60,7 @@ def update_database(project_config):
 
                     # Text from stderr (which is summary info)
                     data = fh2.readlines()
+                    data = [l for l in data if l.strip() != ""]
 
                     #Sample IDs
                     index_sample = data[0].split(" ")[0].split("_")[1].strip()
