@@ -19,5 +19,6 @@ with open(failed) as fh:
 		else:
 			failed_details[index] += 1
 
-print(json.dumps(failed_details, indent=2))
+# print(json.dumps(failed_details, indent=2))
+print("\n".join(failed_details.keys()))
 
