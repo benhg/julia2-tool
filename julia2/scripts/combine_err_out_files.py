@@ -20,5 +20,5 @@ for file in files:
 		err_file.close()
 
 		with open(file, "w") as fh:
-			file.write(new_text) 
+			fh.write(new_text) 
 
