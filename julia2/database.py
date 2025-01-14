@@ -138,12 +138,11 @@ def update_database(project_config):
         writer.writerow(headers)
 
     
-        
+    all_files = glob(path) 
     inputs = []
     for file in all_files:
         inputs.append((file, output_file, data,sample_to_taxon,sample_to_taxon_short,row))
-
-    all_files = glob(path)
+   
     pool = multiprocessing.Pool()
     pool.map(update_database_single, inputs)
 
