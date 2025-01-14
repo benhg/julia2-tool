@@ -111,10 +111,10 @@ def update_database_single(vals_tuple):
             row["alignment_rate"] = row["num_aligned_any"] / row[
                 "num_reads"]
             with open(output_file, "a") as fh:
-                fcntl.flock(g, fcntl.LOCK_EX)
+                fcntl.flock(output_file, fcntl.LOCK_EX)
                 writer = csv.DictWriter(fh, fieldnames=headers)
                 writer.writerow(row)
-                fcntl.flock(g, fcntl.LOCK_UN)
+                fcntl.flock(output_file, fcntl.LOCK_UN)
         except Exception as e:
             if "list index out of range" in str(e):
                 print(f"File {file} is still running")
