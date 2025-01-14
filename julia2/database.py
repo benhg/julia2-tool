@@ -145,11 +145,7 @@ def update_database(project_config):
    
     pool = multiprocessing.Pool()
     pool.map(update_database_single, inputs)
-    while True:
-        try:
-            pool.join()
-        except Exception as e:
-            continue
+    pool.close()
        
 
     print(f"Generated database to {output_file}")
