@@ -35,7 +35,7 @@ def update_database_single(vals_tuple):
     """
     Update the database for a single file as part of the multiprocessing Pool
     """
-    file, output_file, data,sample_to_taxon,sample_to_taxon_short,row = vals_tuple
+    file, output_file,sample_to_taxon,sample_to_taxon_short,row = vals_tuple
     with open(file) as fh2:
         try:
             # Name and metadata
@@ -141,7 +141,7 @@ def update_database(project_config):
     all_files = glob(path) 
     inputs = []
     for file in all_files:
-        inputs.append((file, output_file, data,sample_to_taxon,sample_to_taxon_short,row))
+        inputs.append((file, output_file, sample_to_taxon,sample_to_taxon_short,row))
    
     pool = multiprocessing.Pool()
     pool.map(update_database_single, inputs)
