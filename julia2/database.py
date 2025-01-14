@@ -118,10 +118,8 @@ def update_database_single(vals_tuple):
         except Exception as e:
             if "list index out of range" in str(e):
                 print(f"File {file} is still running")
-                return
-
-            print(f"failed for file {file}")
-            print(e)
+            return
+        print(f"Finished processing file {file}")
 
 def update_database(project_config):
     """
