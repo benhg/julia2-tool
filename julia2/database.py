@@ -121,6 +121,7 @@ def update_database_single(vals_tuple):
                 return
 
             print(f"failed for file {file}")
+            print(e)
 
 def update_database(project_config):
     """
