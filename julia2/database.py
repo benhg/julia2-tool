@@ -23,6 +23,7 @@ headers = [
     "num_aligned_any", "alignment_rate", "exec_time"
 ]
 
+
 def combine_out_err_files(project_config):
     """
     In case SLURM out and error files get separated, we neeed to fold them all into the corresponding .out file
@@ -31,11 +32,12 @@ def combine_out_err_files(project_config):
     # This should only ever return 2 files.
     # Combine the .out and the .err into .out, with the .out first
 
+
 def update_database_single(vals_tuple):
     """
     Update the database for a single file as part of the multiprocessing Pool
     """
-    file, output_file,sample_to_taxon,sample_to_taxon_short = vals_tuple
+    file, output_file, sample_to_taxon, sample_to_taxon_short = vals_tuple
     with open(file) as fh2:
         try:
             # Name and metadata
@@ -65,14 +67,14 @@ def update_database_single(vals_tuple):
                 "num_reads": int(data[1].split(" ")[0]),
                 "num_aligned_none": int(data[3].split("(")[0].strip()),
                 "num_aligned_once": int(data[4].split("(")[0].strip()),
-                "num_aligned_multiple":
-                int(data[5].split("(")[0].strip()),
+                "num_aligned_multiple": int(data[5].split("(")[0].strip()),
                 "exec_time": slurm_time
             }
 
             # Pair type
             try:
-                if int(reads_sample.split("s")[1]) <= project_config.num_samples_per_lane - 1:
+                if int(reads_sample.split("s")
+                       [1]) <= project_config.num_samples_per_lane - 1:
                     reads_lane = 1
                 else:
                     reads_lane = 2
@@ -80,7 +82,8 @@ def update_database_single(vals_tuple):
                 reads_lane = 2
 
             try:
-                if int(index_sample.split("s")[1]) <= project_config.num_samples_per_lane - 1:
+                if int(index_sample.split("s")
+                       [1]) <= project_config.num_samples_per_lane - 1:
                     index_lane = 1
                 else:
                     index_lane = 2
@@ -89,9 +92,8 @@ def update_database_single(vals_tuple):
 
             if reads_sample == index_sample:
                 row["pairtype"] = "True_Auto"
-            elif sample_to_taxon_short[
-                    reads_sample] == sample_to_taxon_short[
-                        index_sample]:
+            elif sample_to_taxon_short[reads_sample] == sample_to_taxon_short[
+                    index_sample]:
                 row["pairtype"] = "Taxon_Auto"
             elif reads_lane != index_lane:
                 row["pairtype"] = "Other_Lane"
@@ -99,17 +101,15 @@ def update_database_single(vals_tuple):
                 row["pairtype"] = "Allo"
 
             # Alignment rates
-            row["single_alignment_rate"] = row[
-                "num_aligned_once"] / int(row["num_reads"])
+            row["single_alignment_rate"] = row["num_aligned_once"] / int(
+                row["num_reads"])
             row["none_alignment_rate"] = row["num_aligned_none"] / row[
                 "num_reads"]
-            row["multiple_alignment_rate"] = row[
-                "num_aligned_multiple"] / row["num_reads"]
-            row["num_aligned_any"] = int(
-                row["num_aligned_once"]) + int(
-                    row["num_aligned_multiple"])
-            row["alignment_rate"] = row["num_aligned_any"] / row[
+            row["multiple_alignment_rate"] = row["num_aligned_multiple"] / row[
                 "num_reads"]
+            row["num_aligned_any"] = int(row["num_aligned_once"]) + int(
+                row["num_aligned_multiple"])
+            row["alignment_rate"] = row["num_aligned_any"] / row["num_reads"]
             with open(output_file, "a") as fh:
                 fcntl.flock(fh, fcntl.LOCK_EX)
                 writer = csv.DictWriter(fh, fieldnames=headers)
@@ -121,6 +121,7 @@ def update_database_single(vals_tuple):
             print(f"Other exception for file {file}")
             return
         print(f"Finished processing file {file}")
+
 
 def update_database(project_config):
     """
@@ -137,15 +138,14 @@ def update_database(project_config):
         writer = csv.writer(fh)
         writer.writerow(headers)
 
-    
-    all_files = glob(path) 
+    all_files = glob(path)
     inputs = []
     for file in all_files:
-        inputs.append((file, output_file, sample_to_taxon,sample_to_taxon_short))
-   
+        inputs.append(
+            (file, output_file, sample_to_taxon, sample_to_taxon_short))
+
     pool = multiprocessing.Pool()
     pool.map(update_database_single, inputs)
     pool.close()
-       
 
     print(f"Generated database to {output_file}")
