@@ -149,6 +149,7 @@ def update_database(project_config):
         try:
             ready = [result.ready() for result in results]
             successful = [result.successful() for result in results]
+            print(len(ready), len(successful))
             break
         except Exception:
             continue
