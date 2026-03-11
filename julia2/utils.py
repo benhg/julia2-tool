@@ -6,8 +6,11 @@ import sys
 import logging
 import shutil
 import os
+import time
 
 logger = logging.getLogger("julia2.utils")
+
+import julia2.job_tracking as job_tracking
 
 
 def run_cmd(cmd):
@@ -86,8 +89,8 @@ def create_sbatch_template(slurm_settings,
 """
     logging.debug(f"Running slurm job on node {node} with CPUs {cpus}")
     keyList = sorted(slurm_settings.nodes.keys())
-    for i, v in enumerate(keyList):
-        if v == node:
+    for i, key in enumerate(keyList):
+        if key == node:
             if i + 1 >= len(keyList):
                 i = 0
             slurm_settings.current_node = keyList[i + 1]
@@ -96,27 +99,57 @@ def create_sbatch_template(slurm_settings,
     return sbatch_template, cpus
 
 
-def run_slurm_job(sbatch_text, sbatch_name, project_config, system_config):
+def run_slurm_job(sbatch_text,
+                  sbatch_name,
+                  project_config,
+                  system_config,
+                  job_type="generic",
+                  index_id="",
+                  reads_sample_id=""):
     """
     Submit a Slurm job with SBatch text passed in
 
     sbatch_name must not contain any /
     """
-    logger.debug(f"Creating sbatch file at {project_config.project_dir}/slurm_jobs/{sbatch_name}.sh")
-    with open(f"{project_config.project_dir}/slurm_jobs/{sbatch_name}.sh",
-              "w") as fh:
+    sbatch_script = f"{project_config.project_dir}/slurm_jobs/{sbatch_name}.sh"
+    logger.debug(f"Creating sbatch file at {sbatch_script}")
+    with open(sbatch_script, "w") as fh:
         fh.write(sbatch_text)
 
-    logging.debug(f"Command: [sbatch] {project_config.project_dir}/slurm_jobs/{sbatch_name}.sh")
+    logging.debug(f"Command: [sbatch] {sbatch_script}")
     if system_config.use_slurm:
-        logging.info(
-        subprocess.check_output(
-            f"sbatch {project_config.project_dir}/slurm_jobs/{sbatch_name}.sh",
-            shell=True))
+        submit_output = subprocess.check_output(f"sbatch {sbatch_script}",
+                                                shell=True,
+                                                text=True)
+        logging.info(submit_output.strip())
+        job_id = job_tracking.parse_sbatch_job_id(submit_output)
+        stdout_path = f"{project_config.project_dir}/output/{'alignment_database_data' if job_type == 'alignment' else 'index_creation'}/slurm-{job_id}.out"
+        job_tracking.append_job_record(
+            project_config,
+            job_tracking.make_job_record(job_id,
+                                         sbatch_name,
+                                         job_type,
+                                         sbatch_script,
+                                         stdout_path,
+                                         index_id=index_id,
+                                         reads_sample_id=reads_sample_id))
+        return job_id
     else:
-        logging.info(subprocess.check_output(
-            f"/bin/bash {project_config.project_dir}/slurm_jobs/{sbatch_name}.sh &",
-            shell=True))
+        subprocess.Popen(["/bin/bash", sbatch_script])
+        job_id = f"local-{int(time.time() * 1000)}"
+        stdout_path = ""
+        job_tracking.append_job_record(
+            project_config,
+            job_tracking.make_job_record(job_id,
+                                         sbatch_name,
+                                         job_type,
+                                         sbatch_script,
+                                         stdout_path,
+                                         index_id=index_id,
+                                         reads_sample_id=reads_sample_id,
+                                         state="RUNNING"))
+        logging.info("Started local job %s", job_id)
+        return job_id
 
 
 def setup_logging(project_config, log_level: int = logging.ERROR):
