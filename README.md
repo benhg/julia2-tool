@@ -53,6 +53,7 @@ Each step above produces and requires different data. This is a list:
 │   │   ├── index_02_sample_01.out
 │   │   ├── index_02_sample_02.out
 │   │   └── raw // This is where the raw SAM files that come out of Bowtie2 go in case they are needed for detailed analysis
+│   ├── job_status.csv // One row per submitted job with tracked SLURM state
 │   ├── hopping_results.csv // The results from the analysis come here
 │   └── index_creation // Index creation output files go here. The indexes go to the indexes/ directory though.
 │       └── index_01.out
@@ -72,6 +73,7 @@ Each step above produces and requires different data. This is a list:
 - Intermediate output (from the running of the alignments) will go into `alignment_database_data`
 - Summary rows are added to `alignment_database.csv`
 - Final answers get put in `hopping_results.csv`
+- Submitted jobs and their current tracked state go into `job_status.csv`
 - SLURM job batch files are stored in `slurm_jobs/`
 
 ## Steps to Detect Index Hopping
@@ -145,23 +147,31 @@ The help menu for the project is as follows:
 
 ```
 usage: tool.py [-h] -a
-               {create_project,delete_project,configure_project,configure_system,create_index_fasta_from_raw_reads,create_indexes,run_alignmnents,update_database,generate_output}
-               -p PROJECT [-r RAW_READS] [-f FILE] [-t {all,true_auto,taxon_auto,allo,same_lane,other_lane}]
+               {create_project,delete_project,configure_project,configure_system,create_index_fasta_from_raw_reads,create_index_fasta_many_reads,create_indexes,run_alignments,update_database,generate_output,cleanup_index_fastas,check_index_creation_err,job_status}
+               -p PROJECT [-r RAW_READS] [-i READ_ID] [-f FILE] [-o OUTPUT_FILE]
+               [-t {all,true_auto,taxon_auto,allo,same_lane,other_lane}]
+               [--resume | --reset]
 
 View and manage paper portfolios
 
 optional arguments:
   -h, --help            show this help message and exit
-  -a {create_project,delete_project,configure_project,configure_system,create_index_fasta_from_raw_reads,create_indexes,run_alignmnents,update_database,generate_output}, --action {create_project,delete_project,configure_project,configure_system,create_index_fasta_from_raw_reads,create_indexes,run_alignmnents,update_database,generate_output}
+  -a {create_project,delete_project,configure_project,configure_system,create_index_fasta_from_raw_reads,create_index_fasta_many_reads,create_indexes,run_alignments,update_database,generate_output,cleanup_index_fastas,check_index_creation_err,job_status}, --action {create_project,delete_project,configure_project,configure_system,create_index_fasta_from_raw_reads,create_index_fasta_many_reads,create_indexes,run_alignments,update_database,generate_output,cleanup_index_fastas,check_index_creation_err,job_status}
                         Action to perform.
   -p PROJECT, --project PROJECT
                         Project name to act on. Either absolute path or path relative to JULIA2-Projects dir in system
                         config
   -r RAW_READS, --raw-reads RAW_READS
                         Raw Reads FASTA file, used for creating index fastas
+  -i READ_ID, --read-id READ_ID
+                        Read ID that goes with the -f option for create_index_fasta_from_raw_reads
   -f FILE, --file FILE  File to operate on. Action specific behavior
+  -o OUTPUT_FILE, --output-file OUTPUT_FILE
+                        File to output to. Action specific behavior
   -t {all,true_auto,taxon_auto,allo,same_lane,other_lane}, --taxon-set {all,true_auto,taxon_auto,allo,same_lane,other_lane}
                         For alignment, specify which type of raw read taxons to run alignments against
+  --resume              Only submit target alignments that are not already completed or active
+  --reset               Forget tracked state for the target alignments, then resubmit the full target set
 ```
 
 Generally, follow the steps in the section "steps to detect index hopping". Example project and system config files can be found in the JSON files in this directory. The system config matches the HPC system at Lewis & Clark College and the project config matches a specific dataset we have been working with there.
@@ -176,8 +186,43 @@ Generally, follow the steps in the section "steps to detect index hopping". Exam
 7. Either use the `create_index_fasta_from_raw_reads` option of this tool, or otherwise create a single FASTA of all the sequences you want to make an index out of
 8. Create indexes using the `create_indexes` options
 9. Run alignments of raw reads against your indexes. Make sure you are providing a newline-separated list of sequence names in the `--file` option
-10. Create a database from the alignments you ran using `update_database`
-11. Create an index hopping report using `generate_output`
+   a. Use `-t same_lane` for an intra-lane run
+   b. Use `--resume` to continue a partial run without resubmitting completed or active work
+   c. Use `--reset` to discard tracked state for the requested target set and resubmit it cleanly
+10. Check `job_status` while jobs are in flight instead of reconstructing progress from `squeue` and individual `slurm-*.out` files
+11. Create a database from the alignments you ran using `update_database`
+12. Create an index hopping report using `generate_output`
+
+## Job Tracking and Resumable Runs
+
+Each submitted index build or alignment job is recorded in `output/job_status.csv`. The tracker stores the SLURM job id, job type, target index, target read sample, submit time, stdout path, and the latest known SLURM state.
+
+Use `job_status` to refresh and print the current tracked state:
+
+```
+python3 -m julia2.julia2 -p /home/labs/binford/index_hopping_project -a job_status
+```
+
+For large alignment batches, prefer `--resume`:
+
+```
+python3 -m julia2.julia2 -p /home/labs/binford/index_hopping_project -a run_alignments -f /home/glick/julia2_tool_inputs/proteome_full_alignment_names.txt -t same_lane --resume
+```
+
+`--resume` behavior:
+
+- skip alignments already tracked as `COMPLETED`
+- skip alignments already tracked as `RUNNING`, `PENDING`, or `SUBMITTED`
+- resubmit alignments tracked as failed or cancelled
+- submit alignments that do not yet appear in the ledger
+
+Use `--reset` only when you want to rerun a specific requested target set from scratch:
+
+```
+python3 -m julia2.julia2 -p /home/labs/binford/index_hopping_project -a run_alignments -f /home/glick/julia2_tool_inputs/proteome_full_alignment_names.txt -t same_lane --reset
+```
+
+`--reset` removes tracked alignment records for the requested workset and then resubmits that full target set. It does not delete SLURM output files or database rows by itself.
 
 ## Database Field Meanings
 
@@ -232,6 +277,18 @@ s001_c39995_g1_i1_m_10141_SIC_TR_SIC_LRE_LAZ_LRUmerged
 ```
 To run other kinds of alignments, just change the `-t` flag.
 
+Resume a partial intra-lane run without duplicating completed or active work:
+
+```
+python3 -m julia2.julia2 -p /home/labs/binford/index_hopping_project -a run_alignments -f /home/glick/julia2_tool_inputs/proteome_full_alignment_names.txt -t same_lane --resume
+```
+
+Check tracked job status:
+
+```
+python3 -m julia2.julia2 -p /home/labs/binford/index_hopping_project -a job_status
+```
+
 Create indexes from a FASTA file that contains sequences you wnat to turn into indexes:
 ```
 ./julia2.py -p /home/labs/binford/index_hopping_project -a create_indexes -f ~/JULIA-Take-2/src/single_sequence_index/data/*.fasta
@@ -264,4 +321,3 @@ Generate the final output after the database has been generated:
 ```
 ./julia2.py -p /home/labs/binford/index_hopping_project/ -a generate_output
 ```
-
