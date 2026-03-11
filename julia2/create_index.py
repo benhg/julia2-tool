@@ -56,7 +56,12 @@ bowtie2-build --threads {cpus} {project_config.project_dir}/indexes/{index_name}
 """
     logger.debug(f"Creating index for {index_name}")
     logger.debug(f"SBatch text: {sbatch_text}")
-    utils.run_slurm_job(sbatch_text, f"index_{os.path.basename(index_name)}", project_config, system_config)
+    utils.run_slurm_job(sbatch_text,
+                        f"index_{os.path.basename(index_name)}",
+                        project_config,
+                        system_config,
+                        job_type="index",
+                        index_id=os.path.basename(index_name))
 
 
 def cleanup_index_fastas(project_config):
@@ -128,7 +133,7 @@ def find_reads(file, read_id, out_file, project_config):
                     logger.debug(f"Found sequence {sequence} in read {read_id}. Title {header}")
                     out_handle.write(f">{header}\n")
                     out_handle.write(f"{record.seq}\n")
-                    tracker[sequence] = true
+                    tracker[sequence] = True
                     break
 
                 if sequence_count == len(sequences):
@@ -189,7 +194,6 @@ def check_index_creation_err(project_config):
     stderr_files = glob.glob(f"{project_config.project_dir}/output/index_creation/slurm-*.*")
     for file in stderr_files:
         with open(file) as fh:
-            txt = file.read()
+            txt = fh.read()
             if "Error: Encountered Internal Bowtie2 Exception" in txt:
                 logger.error(f"File {file} reported error")
-

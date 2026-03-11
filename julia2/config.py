@@ -18,7 +18,7 @@ class SlurmSettings:
     current_node: str
     partition_name: str
     account: str
-    email: str
+    email: str = ""
 
 
 @dataclass
@@ -32,10 +32,14 @@ class SystemConfig:
     def from_json(json_data: str) -> 'SystemConfig':
         """Parses JSON text into a SystemConfig object."""
         data = json.loads(json_data)
-        slurm_settings = SlurmSettings(**data['slurm_settings'])
+        slurm_data = data['slurm_settings']
+        if 'email' not in slurm_data:
+            slurm_data['email'] = ""
+        slurm_settings = SlurmSettings(**slurm_data)
         return SystemConfig(slurm_settings=slurm_settings,
                             use_slurm=data['use_slurm'],
-                            project_dir=data['project_dir'],
+                            project_dir=data.get('project_dir',
+                                                 data.get('project_path', '')),
                             projects=data['projects'])
 
     def to_json(self) -> str:
@@ -125,6 +129,8 @@ def load_project_config(system_config, project):
 
 
 def update_configs(system_config, project_config):
+    if system_config is None or project_config is None:
+        return
     project_config_text = project_config.to_json()
     system_config_text = system_config.to_json()
     with open(system_config_file, "w") as fh:

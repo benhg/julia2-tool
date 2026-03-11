@@ -68,6 +68,8 @@ def create_blank_project(project_config, system_config):
     os.makedirs(f"{project_dir}/output", exist_ok=True)
     os.makedirs(f"{project_dir}/output/alignment_database_data",
                 exist_ok=True)
+    os.makedirs(f"{project_dir}/output/alignment_database_data/raw",
+                exist_ok=True)
     os.makedirs(f"{project_dir}/output/index_creation", exist_ok=True)
     os.makedirs(f"{project_dir}/assembled_untranslated_transcripts", exist_ok=True)
 
@@ -76,7 +78,10 @@ def create_blank_project(project_config, system_config):
         os.utime(f"{project_dir}/output/alignment_database.csv", None)
 
     with open(f"{project_dir}/output/hopping_results.csv", "a"):
-        os.utime(f"{project_dir}/output/alignment_database.csv", None)
+        os.utime(f"{project_dir}/output/hopping_results.csv", None)
+
+    with open(f"{project_dir}/output/job_status.csv", "a"):
+        os.utime(f"{project_dir}/output/job_status.csv", None)
 
 
 def delete_project(project_config, system_config):

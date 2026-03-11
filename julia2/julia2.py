@@ -15,6 +15,7 @@ import julia2.final_output as final_output
 import julia2.database as database
 import julia2.utils as utils
 import julia2.align as align
+import julia2.job_tracking as job_tracking
 
 """
 Public API
@@ -83,6 +84,7 @@ def update_database(args, system_config, project_config):
     """
     Update the alignment database with all jobs that have
     """
+    job_tracking.refresh_job_statuses(project_config, system_config.use_slurm)
     database.update_database(project_config)
 
 def create_index_fasta_from_raw_reads(args, system_config, project_config):
@@ -122,6 +124,15 @@ def run_alignments(args, system_config, project_config):
     }
 
     func_to_align_set[args.taxon_set](system_config, project_config, args.file)
+
+
+def job_status(args, system_config, project_config):
+    """
+    Refresh and print tracked job status.
+    """
+    rows = job_tracking.refresh_job_statuses(project_config,
+                                             system_config.use_slurm)
+    print(job_tracking.format_job_status_report(rows))
 
 def _parse_args(parser: argparse.ArgumentParser):
     """
@@ -185,7 +196,8 @@ act_to_func = {
         "update_database": update_database,
         "generate_output": generate_output,
         "cleanup_index_fastas": cleanup_index_fastas,
-        "check_index_creation_err": check_index_creation_err
+        "check_index_creation_err": check_index_creation_err,
+        "job_status": job_status
     }
 
 def main():

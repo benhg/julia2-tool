@@ -15,6 +15,7 @@ import fcntl
 logger = logging.getLogger("julia2.database")
 
 import julia2.utils as utils
+import julia2.job_tracking as job_tracking
 
 headers = [
     "reads_sample", "reads_taxon", "index_sample", "index_taxon", "num_reads",
@@ -37,7 +38,7 @@ def update_database_single(vals_tuple):
     """
     Update the database for a single file as part of the multiprocessing Pool
     """
-    file, output_file, sample_to_taxon, sample_to_taxon_short = vals_tuple
+    file, output_file, sample_to_taxon, sample_to_taxon_short, num_samples_per_lane = vals_tuple
     with open(file) as fh2:
         try:
             # Name and metadata
@@ -74,7 +75,7 @@ def update_database_single(vals_tuple):
             # Pair type
             try:
                 if int(reads_sample.split("s")
-                       [1]) <= project_config.num_samples_per_lane - 1:
+                       [1]) <= num_samples_per_lane - 1:
                     reads_lane = 1
                 else:
                     reads_lane = 2
@@ -83,7 +84,7 @@ def update_database_single(vals_tuple):
 
             try:
                 if int(index_sample.split("s")
-                       [1]) <= project_config.num_samples_per_lane - 1:
+                       [1]) <= num_samples_per_lane - 1:
                     index_lane = 1
                 else:
                     index_lane = 2
@@ -133,16 +134,28 @@ def update_database(project_config):
 
     sample_to_taxon = project_config.sample_to_taxon
     sample_to_taxon_short = project_config.sample_to_taxon_short
+    try:
+        job_rows = job_tracking.load_job_records(project_config)
+    except FileNotFoundError:
+        job_rows = []
+    completed_paths = {
+        row["stdout_path"]
+        for row in job_rows
+        if row["job_type"] == "alignment" and row["state"] == "COMPLETED"
+    }
 
     with open(output_file, "w") as fh:
         writer = csv.writer(fh)
         writer.writerow(headers)
 
     all_files = glob(path)
+    if completed_paths:
+        all_files = [file for file in all_files if file in completed_paths]
     inputs = []
     for file in all_files:
         inputs.append(
-            (file, output_file, sample_to_taxon, sample_to_taxon_short))
+            (file, output_file, sample_to_taxon, sample_to_taxon_short,
+             project_config.num_samples_per_lane))
 
     pool = multiprocessing.Pool()
     pool.map(update_database_single, inputs)
