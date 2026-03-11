@@ -114,6 +114,7 @@ def cleanup_index_fastas(args, system_config, project_config):
     create_index.cleanup_index_fastas(project_config)
 
 def run_alignments(args, system_config, project_config):
+    job_tracking.refresh_job_statuses(project_config, system_config.use_slurm)
     func_to_align_set = {
         "all": align.run_all_samples,
         "taxon_auto": align.run_all_taxon_auto_samples,
@@ -123,7 +124,11 @@ def run_alignments(args, system_config, project_config):
         "other_lane": align.run_all_cross_lane_samples
     }
 
-    func_to_align_set[args.taxon_set](system_config, project_config, args.file)
+    func_to_align_set[args.taxon_set](system_config,
+                                      project_config,
+                                      args.file,
+                                      resume=args.resume,
+                                      reset=args.reset)
 
 
 def job_status(args, system_config, project_config):
@@ -177,6 +182,13 @@ def _parse_args(parser: argparse.ArgumentParser):
         ],
         default="all",
         type=str)
+    resume_reset = parser.add_mutually_exclusive_group()
+    resume_reset.add_argument("--resume",
+                              help="Only submit target alignments that are not already completed or active.",
+                              action="store_true")
+    resume_reset.add_argument("--reset",
+                              help="Forget tracked state for the target alignments, then resubmit the full target set.",
+                              action="store_true")
     args = parser.parse_args()
     return args
 
