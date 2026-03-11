@@ -70,7 +70,7 @@ def configure_system(args, system_config, project_config):
     """
     Configure the system interactively
     """
-    system_config = config.congfigure_system()
+    return config.congfigure_system()
 
 
 def generate_output(args, system_config, project_config):
@@ -234,7 +234,9 @@ def main():
         project_config = config.ProjectConfig(project_dir=args.project, sample_to_taxon=None, sample_to_taxon_short=None, project_name=os.path.basename(args.project), num_samples=0, num_samples_per_lane=0)
     utils.setup_logging(project_config)
 
-    act_to_func[args.action](args, system_config, project_config)
+    result = act_to_func[args.action](args, system_config, project_config)
+    if args.action == "configure_system" and result is not None:
+        system_config = result
 
     # Write back any changed configs to the files
     config.update_configs(system_config, project_config)
