@@ -205,6 +205,25 @@ python3 -m julia2.julia2 -p /home/labs/binford/index_hopping_project -a job_stat
 
 When enough jobs have already completed, `job_status` also prints an estimated remaining wall time for the active queue based on the median runtime of completed jobs. This is only a heuristic and depends on current cluster concurrency and scheduling.
 
+## Interactive System Configuration
+
+`configure_system` now supports interactive setup of `~/.julia2/system_config.json`.
+
+It can:
+
+- reuse values from an existing system config
+- prompt for `use_slurm`, partition, account, email, project base directory, and known projects
+- prompt for the node CPU map used for round-robin submission
+- optionally query `sinfo` and prefill the node CPU map from the active SLURM cluster
+
+Example:
+
+```
+python3 -m julia2.julia2 -p /home/labs/binford/index_hopping_project -a configure_system
+```
+
+If `sinfo` is available, choose the autodetect prompt to seed the node map. You can still edit the detected values before the file is written.
+
 For large alignment batches, prefer `--resume`:
 
 ```
