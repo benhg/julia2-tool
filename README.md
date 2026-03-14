@@ -203,7 +203,7 @@ Use `job_status` to refresh and print the current tracked state:
 python3 -m julia2.julia2 -p /home/labs/binford/index_hopping_project -a job_status
 ```
 
-When enough jobs have already completed, `job_status` also prints an estimated remaining wall time for the active queue based on the median runtime of completed jobs. This is only a heuristic and depends on current cluster concurrency and scheduling.
+When enough jobs have already completed, `job_status` also prints an estimated remaining wall time for the active queue based on the recent observed completion rate of completed jobs. If there is not enough completion history yet, it falls back to a median-runtime heuristic. This is still a heuristic and depends on current cluster concurrency and scheduling.
 
 ## Interactive System Configuration
 
