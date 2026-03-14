@@ -21,6 +21,7 @@ JOB_HEADERS = [
     "sbatch_script",
     "stdout_path",
     "submitted_at",
+    "completed_at",
     "state",
     "elapsed",
     "exit_code",
@@ -64,7 +65,11 @@ def append_job_record(project_config, row):
 def load_job_records(project_config):
     path = ensure_job_status_file(project_config)
     with open(path, newline="") as fh:
-        return list(csv.DictReader(fh))
+        rows = list(csv.DictReader(fh))
+    for row in rows:
+        for header in JOB_HEADERS:
+            row.setdefault(header, "")
+    return rows
 
 
 def write_job_records(project_config, rows):
@@ -94,6 +99,7 @@ def make_job_record(job_id, sbatch_name, job_type, sbatch_script, stdout_path,
         "sbatch_script": sbatch_script,
         "stdout_path": stdout_path,
         "submitted_at": datetime.now(timezone.utc).isoformat(),
+        "completed_at": "",
         "state": state,
         "elapsed": elapsed,
         "exit_code": exit_code,
@@ -165,6 +171,7 @@ def _query_sacct(job_ids):
 def refresh_job_statuses(project_config, use_slurm):
     rows = load_job_records(project_config)
     slurm_ids = [row["job_id"] for row in rows if row["job_id"].isdigit()]
+    now = datetime.now(timezone.utc).isoformat()
 
     if use_slurm and slurm_ids:
         live_status = _query_squeue(slurm_ids)
@@ -176,6 +183,7 @@ def refresh_job_statuses(project_config, use_slurm):
     updated_rows = []
     for row in rows:
         job_id = row["job_id"]
+        previous_state = row["state"]
         status = live_status.get(job_id) or acct_status.get(job_id)
         if status:
             row["state"] = status.get("state", row["state"]) or row["state"]
@@ -184,6 +192,10 @@ def refresh_job_statuses(project_config, use_slurm):
             row["reason"] = status.get("reason", row["reason"]) or row["reason"]
         elif not use_slurm and row["state"] == "SUBMITTED":
             row["state"] = "RUNNING"
+        if row["state"] in TERMINAL_STATES and not row.get("completed_at"):
+            row["completed_at"] = _infer_completed_at(row, now)
+        elif previous_state in TERMINAL_STATES and row["state"] not in TERMINAL_STATES:
+            row["completed_at"] = ""
         updated_rows.append(row)
 
     write_job_records(project_config, updated_rows)
@@ -243,7 +255,91 @@ def _format_seconds(total_seconds):
     return f"{seconds}s"
 
 
-def _estimate_remaining_time(rows):
+def _parse_timestamp(timestamp_text):
+    if not timestamp_text:
+        return None
+    timestamp_text = timestamp_text.strip()
+    if not timestamp_text:
+        return None
+    try:
+        return datetime.fromisoformat(timestamp_text)
+    except ValueError:
+        return None
+
+
+def _infer_completed_at(row, default_time):
+    submitted_at = _parse_timestamp(row.get("submitted_at"))
+    elapsed_seconds = _parse_elapsed_to_seconds(row.get("elapsed"))
+    if submitted_at is not None and elapsed_seconds is not None:
+        return datetime.fromtimestamp(
+            submitted_at.timestamp() + elapsed_seconds, timezone.utc
+        ).isoformat()
+    return default_time
+
+
+def _effective_completed_at(row):
+    recorded_completed_at = _parse_timestamp(row.get("completed_at"))
+    submitted_at = _parse_timestamp(row.get("submitted_at"))
+    elapsed_seconds = _parse_elapsed_to_seconds(row.get("elapsed"))
+    inferred_completed_at = None
+    if submitted_at is not None and elapsed_seconds is not None:
+        inferred_completed_at = datetime.fromtimestamp(
+            submitted_at.timestamp() + elapsed_seconds, timezone.utc
+        )
+
+    if recorded_completed_at is None:
+        return inferred_completed_at
+    if inferred_completed_at is None:
+        return recorded_completed_at
+
+    # Older rows may have been backfilled with "now" when completed_at was introduced.
+    # If the recorded completion is much later than the historical lower bound, prefer
+    # the inferred timestamp for ETA calculations to avoid a fake burst of completions.
+    if (recorded_completed_at - inferred_completed_at).total_seconds() > 3600:
+        return inferred_completed_at
+    return recorded_completed_at
+
+
+def _estimate_remaining_time_from_completion_rate(rows):
+    active_rows = [
+        row for row in rows
+        if row["state"] in ACTIVE_STATES or row["state"] == "SUBMITTED"
+    ]
+    if not active_rows:
+        return None
+
+    completed_rows = [
+        row for row in rows
+        if row["state"] == "COMPLETED" and _effective_completed_at(row)
+    ]
+    completed_rows.sort(key=_effective_completed_at)
+    if len(completed_rows) < 3:
+        return None
+
+    earliest_completion = _effective_completed_at(completed_rows[0])
+    if earliest_completion is None:
+        return None
+
+    now = datetime.now(timezone.utc)
+    observation_seconds = (now - earliest_completion).total_seconds()
+    if observation_seconds <= 0:
+        return None
+
+    completion_rate = len(completed_rows) / observation_seconds
+    if completion_rate <= 0:
+        return None
+
+    return {
+        "model": "completion_rate",
+        "completed_samples": len(completed_rows),
+        "window_seconds": observation_seconds,
+        "completion_rate_per_hour": completion_rate * 3600,
+        "active_jobs": len(active_rows),
+        "estimated_wall_seconds": len(active_rows) / completion_rate,
+    }
+
+
+def _estimate_remaining_time_from_runtime_heuristic(rows):
     completed_seconds = [
         _parse_elapsed_to_seconds(row["elapsed"])
         for row in rows
@@ -285,6 +381,7 @@ def _estimate_remaining_time(rows):
     estimated_wall_seconds = current_wave_remaining + queued_wall_seconds
 
     return {
+        "model": "median_runtime",
         "completed_samples": len(completed_seconds),
         "median_runtime_seconds": median_runtime,
         "active_jobs": len(active_rows),
@@ -293,6 +390,13 @@ def _estimate_remaining_time(rows):
         "estimated_wall_seconds": estimated_wall_seconds,
         "estimated_serial_seconds": len(active_rows) * median_runtime,
     }
+
+
+def _estimate_remaining_time(rows):
+    return (
+        _estimate_remaining_time_from_completion_rate(rows)
+        or _estimate_remaining_time_from_runtime_heuristic(rows)
+    )
 
 
 def format_job_status_report(rows):
@@ -321,22 +425,33 @@ def format_job_status_report(rows):
     if eta:
         lines.append("")
         lines.append("Estimated remaining time:")
-        lines.append(
-            f"Median completed runtime: {_format_seconds(eta['median_runtime_seconds'])} "
-            f"from {eta['completed_samples']} completed jobs"
-        )
-        lines.append(
-            f"Estimated wall time to drain active queue at current concurrency: "
-            f"{_format_seconds(eta['estimated_wall_seconds'])}"
-        )
-        lines.append(
-            f"Estimated aggregate compute time remaining: "
-            f"{_format_seconds(eta['estimated_serial_seconds'])}"
-        )
+        if eta["model"] == "completion_rate":
+            lines.append(
+                f"Observed completion rate: {eta['completion_rate_per_hour']:.2f} jobs/hour "
+                f"from {eta['completed_samples']} completed jobs "
+                f"over {_format_seconds(eta['window_seconds'])}"
+            )
+            lines.append(
+                f"Estimated wall time to drain active queue at the recent completion rate: "
+                f"{_format_seconds(eta['estimated_wall_seconds'])}"
+            )
+        else:
+            lines.append(
+                f"Median completed runtime: {_format_seconds(eta['median_runtime_seconds'])} "
+                f"from {eta['completed_samples']} completed jobs"
+            )
+            lines.append(
+                f"Estimated wall time to drain active queue at current concurrency: "
+                f"{_format_seconds(eta['estimated_wall_seconds'])}"
+            )
+            lines.append(
+                f"Estimated aggregate compute time remaining: "
+                f"{_format_seconds(eta['estimated_serial_seconds'])}"
+            )
     elif any(row["state"] in ACTIVE_STATES or row["state"] == "SUBMITTED" for row in rows):
         lines.append("")
         lines.append("Estimated remaining time:")
-        lines.append("Not enough completed jobs with elapsed times to estimate yet")
+        lines.append("Not enough completed jobs with timing history to estimate yet")
 
     failed_rows = [
         row for row in rows
