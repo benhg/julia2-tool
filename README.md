@@ -147,7 +147,7 @@ The help menu for the project is as follows:
 
 ```
 usage: tool.py [-h] -a
-               {create_project,delete_project,configure_project,configure_system,create_index_fasta_from_raw_reads,create_index_fasta_many_reads,create_indexes,run_alignments,update_database,generate_output,cleanup_index_fastas,check_index_creation_err,job_status}
+               {create_project,delete_project,configure_project,configure_system,create_index_fasta_from_raw_reads,create_index_fasta_many_reads,create_indexes,run_alignments,update_database,generate_output,cleanup_index_fastas,check_index_creation_err,job_status,job_time_by_node}
                -p PROJECT [-r RAW_READS] [-i READ_ID] [-f FILE] [-o OUTPUT_FILE]
                [-t {all,true_auto,taxon_auto,allo,same_lane,other_lane}]
                [--resume | --reset]
@@ -156,7 +156,7 @@ View and manage paper portfolios
 
 optional arguments:
   -h, --help            show this help message and exit
-  -a {create_project,delete_project,configure_project,configure_system,create_index_fasta_from_raw_reads,create_index_fasta_many_reads,create_indexes,run_alignments,update_database,generate_output,cleanup_index_fastas,check_index_creation_err,job_status}, --action {create_project,delete_project,configure_project,configure_system,create_index_fasta_from_raw_reads,create_index_fasta_many_reads,create_indexes,run_alignments,update_database,generate_output,cleanup_index_fastas,check_index_creation_err,job_status}
+  -a {create_project,delete_project,configure_project,configure_system,create_index_fasta_from_raw_reads,create_index_fasta_many_reads,create_indexes,run_alignments,update_database,generate_output,cleanup_index_fastas,check_index_creation_err,job_status,job_time_by_node}, --action {create_project,delete_project,configure_project,configure_system,create_index_fasta_from_raw_reads,create_index_fasta_many_reads,create_indexes,run_alignments,update_database,generate_output,cleanup_index_fastas,check_index_creation_err,job_status,job_time_by_node}
                         Action to perform.
   -p PROJECT, --project PROJECT
                         Project name to act on. Either absolute path or path relative to JULIA2-Projects dir in system
@@ -202,6 +202,14 @@ Use `job_status` to refresh and print the current tracked state:
 ```
 python3 -m julia2.julia2 -p /home/labs/binford/index_hopping_project -a job_status
 ```
+
+Use `job_time_by_node` to aggregate tracked job elapsed time by SLURM node:
+
+```
+python3 -m julia2.julia2 -p /home/labs/binford/index_hopping_project -a job_time_by_node
+```
+
+This report uses `sacct` node allocation data for tracked jobs. When a job spans multiple nodes, its elapsed wall time and allocated CPU count are split evenly across the allocated nodes, and the report includes total time, average time per job, and total CPU-hours for each node.
 
 When enough jobs have already completed, `job_status` also prints an estimated remaining wall time for the active queue based on the recent observed completion rate of completed jobs. If there is not enough completion history yet, it falls back to a median-runtime heuristic. This is still a heuristic and depends on current cluster concurrency and scheduling.
 
