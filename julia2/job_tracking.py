@@ -5,6 +5,7 @@ Track submitted jobs and report their status.
 import csv
 import logging
 import os
+import shutil
 import subprocess
 from collections import Counter
 from datetime import datetime, timezone
@@ -166,6 +167,71 @@ def _query_sacct(job_ids):
             "reason": reason,
         }
     return results
+
+
+def _query_sacct_node_data(job_ids):
+    if not job_ids:
+        return {}
+    ids = ",".join(job_ids)
+    lines = _run_status_cmd(
+        f"sacct -n -X -P -j {ids} --format=JobIDRaw,NodeList,AllocNodes,AllocCPUS,ElapsedRaw"
+    )
+    results = {}
+    for line in lines:
+        parts = line.split("|", 4)
+        if len(parts) != 5:
+            continue
+        job_id, node_list, alloc_nodes, alloc_cpus, elapsed_raw = parts
+        if not job_id.isdigit() or "." in job_id:
+            continue
+        try:
+            alloc_nodes_value = int(alloc_nodes) if alloc_nodes else 0
+        except ValueError:
+            alloc_nodes_value = 0
+        try:
+            alloc_cpus_value = int(alloc_cpus) if alloc_cpus else 0
+        except ValueError:
+            alloc_cpus_value = 0
+        try:
+            elapsed_raw_value = int(elapsed_raw) if elapsed_raw else None
+        except ValueError:
+            elapsed_raw_value = None
+        results[job_id] = {
+            "node_list": node_list.strip(),
+            "alloc_nodes": alloc_nodes_value,
+            "alloc_cpus": alloc_cpus_value,
+            "elapsed_raw": elapsed_raw_value,
+        }
+    return results
+
+
+def _expand_slurm_nodelist(node_list_text):
+    if not node_list_text:
+        return []
+    node_list_text = node_list_text.strip()
+    if not node_list_text or node_list_text in {"Unknown", "None", "N/A"}:
+        return []
+
+    scontrol = shutil.which("scontrol")
+    if scontrol:
+        try:
+            expanded = subprocess.check_output(
+                [scontrol, "show", "hostnames", node_list_text],
+                text=True
+            ).splitlines()
+            return [node.strip() for node in expanded if node.strip()]
+        except (subprocess.CalledProcessError, OSError):
+            logger.warning("Failed to expand SLURM nodelist: %s", node_list_text)
+
+    if "," in node_list_text and "[" not in node_list_text and "]" not in node_list_text:
+        return [part.strip() for part in node_list_text.split(",") if part.strip()]
+    return [node_list_text]
+
+
+def _format_cpu_hours(cpu_hours):
+    if cpu_hours is None:
+        return "unknown"
+    return f"{cpu_hours:.2f} CPU-hours"
 
 
 def refresh_job_statuses(project_config, use_slurm):
@@ -482,5 +548,85 @@ def format_job_status_report(rows):
             )
         if len(active_rows) > 20:
             lines.append(f"... {len(active_rows) - 20} more")
+
+    return "\n".join(lines)
+
+
+def format_job_time_by_node_report(rows, use_slurm):
+    if not rows:
+        return "No tracked jobs found"
+    if not use_slurm:
+        return "Node time breakdown is only available when SLURM mode is enabled"
+
+    slurm_ids = [row["job_id"] for row in rows if row["job_id"].isdigit()]
+    if not slurm_ids:
+        return "No tracked SLURM jobs found"
+
+    node_data = _query_sacct_node_data(slurm_ids)
+    totals_by_node = Counter()
+    cpu_hours_by_node = Counter()
+    jobs_by_node = Counter()
+    jobs_without_node = 0
+    jobs_without_elapsed = 0
+    jobs_without_cpu_count = 0
+
+    for row in rows:
+        job_id = row["job_id"]
+        if job_id not in node_data:
+            jobs_without_node += 1
+            continue
+
+        job_node_data = node_data[job_id]
+        node_names = _expand_slurm_nodelist(job_node_data["node_list"])
+        if not node_names:
+            jobs_without_node += 1
+            continue
+
+        elapsed_seconds = job_node_data["elapsed_raw"]
+        if elapsed_seconds is None:
+            elapsed_seconds = _parse_elapsed_to_seconds(row.get("elapsed"))
+        if elapsed_seconds is None:
+            jobs_without_elapsed += 1
+            continue
+
+        seconds_per_node = elapsed_seconds / max(len(node_names), 1)
+        alloc_cpus = job_node_data.get("alloc_cpus", 0)
+        cpu_hours_per_node = ((elapsed_seconds * alloc_cpus) / 3600.0) / max(len(node_names), 1)
+        if alloc_cpus <= 0:
+            jobs_without_cpu_count += 1
+        for node_name in node_names:
+            totals_by_node[node_name] += seconds_per_node
+            cpu_hours_by_node[node_name] += cpu_hours_per_node
+            jobs_by_node[node_name] += 1
+
+    if not totals_by_node:
+        return "No node timing data available yet from sacct"
+
+    lines = ["Job time by node:"]
+    for node_name, total_seconds in sorted(
+        totals_by_node.items(),
+        key=lambda item: (-item[1], item[0])
+    ):
+        average_seconds = total_seconds / jobs_by_node[node_name]
+        lines.append(
+            f"{node_name}: {_format_seconds(total_seconds)} total, "
+            f"{_format_seconds(average_seconds)} average/job across {jobs_by_node[node_name]} jobs, "
+            f"{_format_cpu_hours(cpu_hours_by_node[node_name])} total"
+        )
+
+    lines.append("")
+    lines.append(f"Nodes with timing data: {len(totals_by_node)}")
+    lines.append(f"Jobs with node data: {sum(jobs_by_node.values())}")
+    lines.append(f"Total CPU-hours: {_format_cpu_hours(sum(cpu_hours_by_node.values()))}")
+    lines.append(
+        f"Average time per node-attributed job: "
+        f"{_format_seconds(sum(totals_by_node.values()) / sum(jobs_by_node.values()))}"
+    )
+    if jobs_without_node:
+        lines.append(f"Jobs missing node data: {jobs_without_node}")
+    if jobs_without_elapsed:
+        lines.append(f"Jobs missing elapsed time: {jobs_without_elapsed}")
+    if jobs_without_cpu_count:
+        lines.append(f"Jobs missing CPU allocation data: {jobs_without_cpu_count}")
 
     return "\n".join(lines)

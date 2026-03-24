@@ -139,6 +139,16 @@ def job_status(args, system_config, project_config):
                                              system_config.use_slurm)
     print(job_tracking.format_job_status_report(rows))
 
+
+def job_time_by_node(args, system_config, project_config):
+    """
+    Refresh and print tracked job time aggregated by node.
+    """
+    rows = job_tracking.refresh_job_statuses(project_config,
+                                             system_config.use_slurm)
+    print(job_tracking.format_job_time_by_node_report(rows,
+                                                      system_config.use_slurm))
+
 def _parse_args(parser: argparse.ArgumentParser):
     """
     Parse args for our program
@@ -209,7 +219,8 @@ act_to_func = {
         "generate_output": generate_output,
         "cleanup_index_fastas": cleanup_index_fastas,
         "check_index_creation_err": check_index_creation_err,
-        "job_status": job_status
+        "job_status": job_status,
+        "job_time_by_node": job_time_by_node,
     }
 
 def main():
